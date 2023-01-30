@@ -13,9 +13,15 @@ public:
 		: edited_(false), mass_(0), prior_(nil), next_(nil) {}
 
 	inline BufferSegment(BufferSegment *prior)
-		: edited_(false), prior_(prior) {
+		: edited_(false), mass_(0), prior_(prior) {
 		this->next_ = prior->next_;
 		prior->next_ = this;
+	}
+
+	inline BufferSegment(BufferSegment &prior)
+		: edited_(false), mass_(0), prior_(&prior) {
+		this->next_ = prior.next_;
+		prior.next_ = this;
 	}
 
 	inline ~BufferSegment() {
@@ -28,19 +34,19 @@ public:
 	inline Nat mass() const noexcept { return this->mass_; }
 	inline BufferSegment *prior() noexcept { return this->prior_; }
 	inline BufferSegment *next() noexcept { return this->next_; }
-
 	inline Byte &operator [](Nat index) noexcept { return this->data_[index]; }
 
 public:
-	// Throws if `mass_ == CAPACITY`.
+	constexpr Bool full() const noexcept { return this->mass() == CAPACITY; }
+
+public:
 	Void write(Byte datum);
 
-	// Throws if `mass_ == 1`.
-	Void erase(Byte eraser = ' ');
+	Void erase(Byte eraser);
 
-	// Throws if `index >= mass_`.
-	// Returns whether to use `next_` or not.
-	Bool split(Nat index);
+	Void split(Nat index);
+
+	Void shift();
 
 protected:
 	Void fill(const Byte *data, Nat count) noexcept;

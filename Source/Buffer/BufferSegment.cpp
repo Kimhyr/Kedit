@@ -11,21 +11,25 @@ Void BufferSegment::write(Byte datum) {
 }
 
 Void BufferSegment::erase(Byte eraser) {
-	if (this->mass_ == 1)
+	if (this->mass_ == 0)
 		throw false;
 	--this->mass_;
 	this->data_[this->mass_] = eraser;
 	this->edited_ = true;
 }
 
-Bool BufferSegment::split(Nat index) {
+Void BufferSegment::split(Nat index) {
 	if (index >= this->mass_)
 		throw false;
 	new BufferSegment(this);
-	Bool next = index + 1 >= this->mass_ / 2;
-	this->next_->fill(&this->data_[index], this->mass_ - index);
+	this->next_->fill(&this->data_[index], this->mass_ -= this->mass_ - index);
 	this->edited_ = true;
-	return next;
+}
+
+Void BufferSegment::shift() {
+	for (Nat i = 1; i < this->mass_; ++i)
+		this->data_[i - 1] = this->data_[i];
+	this->edited_ = true;
 }
 
 Void BufferSegment::fill(const Byte *data, Nat count) noexcept {
