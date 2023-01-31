@@ -11,9 +11,6 @@ in-segment appendation. For more specifics on the algorithms, go to the
 
 ## Algorithm
 
-Each algorithm will state it's goal followed by the steps, and a 10/10
-"visualization".
-
 ### Inserting
 
 `Source/Buffer.cpp: Void BufferCursor::write(Byte datum) noexcept`
