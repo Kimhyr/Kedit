@@ -3,9 +3,15 @@
 namespace Kedit {
 
 Void BufferCursor::write(Byte datum) noexcept {
-	if (this->segment_.full()) {
+	if (this->index_ == 0) {
+		this->segment_.prepend(*new BufferSegment());
+		this->segment_ = *this->segment_.prior();
+	} else if () {
+		
+	} if (this->segment_.full()) {
 		this->segment_ = *new BufferSegment(this->segment_);
 		this->index_ = 0;
+	} else if (this->index_ == 0) {
 	} else if (!this->atEndOfSegment())
 		this->segment_.split(this->index_);
 	this->segment_.write(datum);

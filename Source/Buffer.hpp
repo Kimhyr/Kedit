@@ -15,17 +15,12 @@ public:
 	inline BufferSegment()
 		: edited_(false), mass_(0), prior_(nil), next_(nil) {}
 
-	inline BufferSegment(BufferSegment *prior)
-		: edited_(false), mass_(0), prior_(prior) {
-		this->next_ = prior->next_;
-		prior->next_ = this;
-	}
-
 	inline BufferSegment(BufferSegment &prior)
 		: edited_(false), mass_(0), prior_(&prior) {
 		this->next_ = prior.next_;
 		prior.next_ = this;
 	}
+
 
 	inline ~BufferSegment() {
 		this->prior_->next_ = this->next_;
@@ -50,6 +45,8 @@ public:
 	Void split(Nat index);
 
 	Void shift();
+
+	Void prepend(BufferSegment &behind);
 
 protected:
 	Void fill(const Byte *data, Nat count) noexcept;
@@ -94,6 +91,8 @@ public:
 	
 	Void moveLeft();
 
+	Void write(const Byte *data, Nat length);
+
 public:
 	// TODO: Experiment O(log(n)) ~> O(1).
 	// 	* For each segment, there exists a list of "Line"s containing:
@@ -115,7 +114,7 @@ class Buffer {
 
 private:
 	Nat lines_;
-	BufferSegment *root_;
+	BufferSegment root_;
 	BufferCursor cursor_;
 };
 
