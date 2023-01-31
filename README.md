@@ -11,6 +11,11 @@ in-segment appendation. For more specifics on the algorithms, go to the
 
 ## Algorithm
 
+Each section will begin with the source code of the implementation followed by
+decision branches in which begins with the decision branches' snippet of the
+implementation followed by the steps it takes, and a 10/10 "visualization" of
+the snippet's process.
+
 ### Inserting
 
 `Source/Buffer.cpp`
