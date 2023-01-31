@@ -4,9 +4,11 @@ namespace Kedit {
 
 Void BufferCursor::write(Byte datum) noexcept {
 	if (this->segment_.full()) {
-		this->segment_ = *new BufferSegment(this->segment_);
+		this->segment_ = (this->segment_.next() && !this->segment_.next()->mass())
+			? *this->segment_.prior()
+			: *new BufferSegment(this->segment_);
 		this->index_ = 0;
-	} else if (this->index_ == 0) {
+	} else if (this->index_ == 0 && this->segment_.mass()) {
 		this->segment_.prepend(*new BufferSegment());
 		this->segment_ = *this->segment_.prior();
 	} else if (!this->atEndOfSegment())
@@ -23,24 +25,25 @@ Void BufferCursor::write(Byte datum) noexcept {
 
 Bool BufferCursor::erase(Byte eraser) {
 	Bool nl = this->onNewLine();
-	if (this->index_) {
-		if (!this->atEndOfSegment())
-			this->segment_.split(this->index_);
-		this->segment_.erase(eraser);
-		--this->index_;
-	} else {
+	if (this->index_ == 0) {
 		if (!this->segment_.prior())
 			throw false;
-		this->segment_.erase(eraser);
 		this->segment_.shift();
-		this->segment_ = *this->segment_.prior();
+		for (this->segment_ = *this->segment_.prior();
+		     !this->segment_.mass();
+		     this->segment_ = *this->segment_.prior()) {
+			if (this->segment_.prior())
+				continue;
+			this->index_ = 0;
+			this->segment_ = *this->segment_.prior();
+			return nl;
+		}
 		this->index_ = this->segment_.mass() - 1;
-	}
-	this->position_.row -= nl;
-	if (nl)
-		this->position_.column = this->getColumn();
-	else --this->position_.column;
-	this->column_ = this->position_.column;
+		return nl;
+	} else if (!this->atEndOfSegment())
+		this->segment_.split(this->index_);
+	this->segment_.erase(eraser);
+	--this->index_;
 	return nl;
 }
 

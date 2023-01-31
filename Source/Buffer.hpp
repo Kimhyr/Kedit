@@ -45,12 +45,11 @@ public:
 
 	Void erase(Byte eraser);
 
+	Void shift();
+	
 	Void split(Nat index);
 
 	Void prepend(BufferSegment &behind);
-
-protected:
-	Void fill(const Byte *data, Nat count) noexcept;
 
 private:
 	Bool edited_;
@@ -58,6 +57,9 @@ private:
 	Nat mass_;
 	BufferSegment *prior_;
 	BufferSegment *next_;
+
+private:
+	Void fill(const Byte *data, Nat count) noexcept;
 };
 
 class BufferCursor {

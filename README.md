@@ -16,7 +16,7 @@ decision branches in which begins with the decision branches' snippet of the
 implementation followed by the steps it takes, and a 10/10 "visualization" of
 the snippet's process.
 
-### Inserting
+### Writing
 
 `Source/Buffer.cpp`
 
@@ -41,7 +41,7 @@ Void Kedit::BufferCursor::write() noexcept {
 }
 ```
 
-#### Insert at the start of the pointed segment.
+#### Write at the start of the pointed segment.
 
 ```cpp
 Void Kedit::BufferCursor::write() noexcept {
@@ -58,14 +58,14 @@ Void Kedit::BufferCursor::write() noexcept {
 
 1. Attach a new segment before the pointed segment; then,
 2. switch the pointed segment to the new segment; finally,
-3. insert the char in the pointed segment (at index `0`).
+3. insert the symbol in the pointed segment (at index `0`).
 
 ```
 segment = (h, i, !, 0, 0, 0, 0, 0)
 insert_start(Z) = (Z, 0, 0, 0, 0, 0, 0, 0)->(h, i, !, 0, 0, 0, 0, 0)
 ```
 
-#### Insert within the pointed segment.
+#### Write within the pointed segment.
 
 ```cpp
 Void Kedit::BufferCursor::write() noexcept {
@@ -79,14 +79,14 @@ Void Kedit::BufferCursor::write() noexcept {
 ```
 
 1. Split the pointed segment from the pointed segment index forwards; then,
-2. append the char to the pointed segment.
+2. append the symbol to the pointed segment.
 
 ```
 segment = (h, i, !, 0, 0, 0, 0, 0)
 insert_within(Z) = (h, Z, 0, 0, 0, 0, 0, 0)->(i, !, 0, 0, 0, 0, 0, 0)
 ```
 
-#### Insert at the end of the pointed segment.
+#### Write at the end of the pointed segment.
 
 ```cpp
 Void Kedit::BufferCursor::write() noexcept {
@@ -96,14 +96,14 @@ Void Kedit::BufferCursor::write() noexcept {
 }
 ```
 
-1. Append the char to the pointed segment.
+1. Append the symbol to the pointed segment.
 
 ```
 segment = (h, i, !, 0, 0, 0, 0, 0)
 insert_end(Z) = (h, i, !, Z, 0, 0, 0, 0)
 ```
 
-#### Insert a full pointed segment.
+#### Write a full pointed segment.
 
 ```cpp
 Void Kedit::BufferCursor::write() noexcept {
@@ -117,17 +117,17 @@ Void Kedit::BufferCursor::write() noexcept {
 }
 ```
 
-1. Attach a new segment after the pointed segment; then,
+1. If the next segment is not empty, attach a new segment; then,
 2. switch the pointed segment to the new segment; then,
 3. update the pointed segment index to 0; finally,
-4. insert the char in the pointed segment.
+4. insert the symbol in the pointed segment.
 
 ```
 segment = (h, i, !, !, !, !, !, !)
 insert_full(Z) = (h, i, !, !, !, !, !, !)->(Z, 0, 0, 0, 0, 0, 0, 0)
 ```
 
-### Deleting
+### Erasing
 
 `Source/Buffer.cpp`
 
@@ -136,6 +136,18 @@ Bool Kedit::BufferCursor::erase(Byte eraser) {
 	
 }
 ```
+
+#### Erase at the start of the pointed segment.
+
+1. If there is no prior segment, throw; then,
+2. shift the pointed segment to the left; finally,
+4. switch the pointed segment to the last segment with mass, or the root
+	 segment.
+
+#### Erase within the pointed segment.
+
+1. Split the pointed segment from the pointed segment index forwards; then,
+2. erase the symbol from the pointed segment.
 
 ### Traversing
 
