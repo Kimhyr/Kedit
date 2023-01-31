@@ -1,0 +1,10 @@
+Buffer
+
+Operations
+	write
+	erase
+	moveUp
+	moveDown
+	moveRight
+	moveLeft
+

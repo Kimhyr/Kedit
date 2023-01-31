@@ -84,7 +84,7 @@ public:
 
 	// Throws "false" if "!this->segment_.prior()".
 	// Returns true if erased a "\n".
-	Bool erase(Byte eraser = ' ');
+	Void erase(Byte eraser = ' ');
 
 	Void moveUp();
 	
