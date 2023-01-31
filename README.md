@@ -16,6 +16,8 @@ Each algorithm will state it's goal followed by the steps, and a 10/10
 
 ### Inserting
 
+`Source/Buffer.cpp: Void BufferCursor::write(Byte datum) noexcept`
+
 ```cpp
 if (this->segment_.full()) {
 	this->segment_ = *new BufferSegment(this->segment_);
@@ -78,6 +80,12 @@ insert_full(Z) = (h, i, !, !, !, !, !, !)->(Z, 0, 0, 0, 0, 0, 0, 0)
 ```
 
 ### Deleting
+
+`Source/Buffer.cpp: Bool BufferCursor::erase(Byte eraser)`
+
+```cpp
+	
+```
 
 ### Traversing
 
