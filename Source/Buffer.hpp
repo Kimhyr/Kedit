@@ -17,14 +17,17 @@ public:
 
 	inline BufferSegment(BufferSegment &prior)
 		: edited_(false), mass_(0), prior_(&prior) {
-		this->next_ = prior.next_;
 		prior.next_ = this;
+		prior.prior_ = this->prior_;
+		this->prior_ = &prior;
 	}
 
 
 	inline ~BufferSegment() {
-		this->prior_->next_ = this->next_;
-		this->next_->prior_ = this->prior_;
+		if (this->prior_)
+			this->prior_->next_ = this->next_;
+		if (this->next_)
+			this->next_->prior_ = this->prior_;
 	}
 public:
 	inline Bool edited() const noexcept { return this->edited_; }
@@ -43,8 +46,6 @@ public:
 	Void erase(Byte eraser);
 
 	Void split(Nat index);
-
-	Void shift();
 
 	Void prepend(BufferSegment &behind);
 

@@ -3,15 +3,12 @@
 namespace Kedit {
 
 Void BufferCursor::write(Byte datum) noexcept {
-	if (this->index_ == 0) {
-		this->segment_.prepend(*new BufferSegment());
-		this->segment_ = *this->segment_.prior();
-	} else if () {
-		
-	} if (this->segment_.full()) {
+	if (this->segment_.full()) {
 		this->segment_ = *new BufferSegment(this->segment_);
 		this->index_ = 0;
 	} else if (this->index_ == 0) {
+		this->segment_.prepend(*new BufferSegment());
+		this->segment_ = *this->segment_.prior();
 	} else if (!this->atEndOfSegment())
 		this->segment_.split(this->index_);
 	this->segment_.write(datum);
@@ -61,7 +58,7 @@ Void BufferCursor::moveUp() {
 			break;
 		if (this->index_ != this->segment_.mass())
 			continue;
-		this->segment_ = this->segment_.next();
+		this->segment_ = *this->segment_.next();
 		this->index_ = 0;
 	}
 }
@@ -75,7 +72,7 @@ Void BufferCursor::moveRight() {
 	if (this->atEndOfSegment()) {
 		if (!this->segment_.next())
 			throw false;
-		this->segment_ = this->segment_.next();
+		this->segment_ = *this->segment_.next();
 		this->index_ = 0;
 	}
 	if (this->onNewLine()) {
@@ -91,7 +88,7 @@ Void BufferCursor::moveLeft() {
 	if (!this->index_) {
 		if (!this->segment_.prior())
 			throw false;
-		this->segment_ = this->segment_.prior();
+		this->segment_ = *this->segment_.prior();
 		this->index_ = this->segment_.mass() - 1;
 	}
 	if (nl) {
@@ -109,7 +106,7 @@ Nat BufferCursor::getColumn() const noexcept {
 		if (!index) {
 			if (!segment.prior())
 				break;
-			segment = segment.prior();
+			segment = *segment.prior();
 			index = segment.mass() - 1;
 		} else --index;
 	}
@@ -135,15 +132,18 @@ Void BufferSegment::erase(Byte eraser) {
 Void BufferSegment::split(Nat index) {
 	if (index >= this->mass_)
 		throw false;
-	new BufferSegment(this);
-	this->next_->fill(&this->data_[index], this->mass_ -= this->mass_ - index);
+	new BufferSegment(*this);
+	Nat count = this->mass_ - (index + 1);
+	this->next_->fill(&this->data_[index], count);
+	this->mass_ -= count;
 	this->edited_ = true;
 }
 
-Void BufferSegment::shift() {
-	for (Nat i = 1; i < this->mass_; ++i)
-		this->data_[i - 1] = this->data_[i];
-	this->edited_ = true;
+Void BufferSegment::prepend(BufferSegment &behind) {
+	this->prior_->next_ = &behind;
+	behind.prior_ = this->prior_;
+	this->prior_ = &behind;
+	this->prior_->next_ = this;
 }
 
 Void BufferSegment::fill(const Byte *data, Nat count) noexcept {
@@ -161,7 +161,7 @@ Void BufferCursor::moveToLineStart() noexcept {
 			goto Continue;
 		if (!this->segment_.prior())
 			break;
-		this->segment_ = this->segment_.prior();
+		this->segment_ = *this->segment_.prior();
 		this->index_ = this->segment_.mass();
 	Continue:
 		--this->index_;
