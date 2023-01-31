@@ -13,25 +13,27 @@ in-segment appendation. For more specifics on the algorithms, go to the
 
 ### Inserting
 
-`Source/Buffer.cpp: Void BufferCursor::write(Byte datum) noexcept`
+`Source/Buffer.cpp`
 
 ```cpp
-if (this->segment_.full()) {
-	this->segment_ = *new BufferSegment(this->segment_);
-	this->index_ = 0;
-} else if (this->index_ == 0) {
-	this->segment_.prepend(*new BufferSegment());
-	this->segment_ = *this->segment_.prior();
-} else if (!this->atEndOfSegment())
-	this->segment_.split(this->index_);
-this->segment_.write(datum);
-++this->index_;
-if (datum == '\n') {
-	++this->position_.row;
-	this->position_.column = 0;
+Void Kedit::BufferCursor::write() noexcept {
+	if (this->segment_.full()) {
+		this->segment_ = *new BufferSegment(this->segment_);
+		this->index_ = 0;
+	} else if (this->index_ == 0) {
+		this->segment_.prepend(*new BufferSegment());
+		this->segment_ = *this->segment_.prior();
+	} else if (!this->atEndOfSegment())
+		this->segment_.split(this->index_);
+	this->segment_.write(datum);
+	++this->index_;
+	if (datum == '\n') {
+		++this->position_.row;
+		this->position_.column = 0;
+	}
+	++this->position_.column;
+	this->column_ = this->position_.column;
 }
-++this->position_.column;
-this->column_ = this->position_.column;
 ```
 
 #### Insert at the start of the pointed segment.
@@ -78,10 +80,12 @@ insert_full(Z) = (h, i, !, !, !, !, !, !)->(Z, 0, 0, 0, 0, 0, 0, 0)
 
 ### Deleting
 
-`Source/Buffer.cpp: Bool BufferCursor::erase(Byte eraser)`
+`Source/Buffer.cpp`
 
 ```cpp
+Bool Kedit::BufferCursor::erase(Byte eraser) {
 	
+}
 ```
 
 ### Traversing
