@@ -22,4 +22,12 @@ struct Dimension {
 		: width(width), height(height) {}
 };
 
+struct Rect {
+	Position position;
+	Dimension dimension;
+
+	inline Rect(const Position &position, const Dimension &dimension)
+		: position(position), dimension(dimension) {}
+};
+
 }
