@@ -38,6 +38,19 @@ Void Kedit::BufferCursor::write() noexcept {
 
 #### Insert at the start of the pointed segment.
 
+```cpp
+Void Kedit::BufferCursor::write() noexcept {
+// ...
+	if (this->index_ == 0) {
+		this->segment_.prepend(*new BufferSegment());
+		this->segment_ = *this->segment_.prior();
+	}
+// ...
+	this->segment_.write(datum);
+// ...
+}
+```
+
 1. Attach a new segment before the pointed segment; then,
 2. switch the pointed segment to the new segment; finally,
 3. insert the char in the pointed segment (at index `0`).
@@ -49,6 +62,17 @@ insert_start(Z) = (Z, 0, 0, 0, 0, 0, 0, 0)->(h, i, !, 0, 0, 0, 0, 0)
 
 #### Insert within the pointed segment.
 
+```cpp
+Void Kedit::BufferCursor::write() noexcept {
+// ...
+	if (!this->atEndOfSegment())
+		this->segment_.split(this->index_);
+// ...
+	this->segment_.write(datum);
+// ...
+}
+```
+
 1. Split the pointed segment from the pointed segment index forwards; then,
 2. append the char to the pointed segment.
 
@@ -59,6 +83,14 @@ insert_within(Z) = (h, Z, 0, 0, 0, 0, 0, 0)->(i, !, 0, 0, 0, 0, 0, 0)
 
 #### Insert at the end of the pointed segment.
 
+```cpp
+Void Kedit::BufferCursor::write() noexcept {
+// ...
+	this->segment_.write(datum);
+// ...
+}
+```
+
 1. Append the char to the pointed segment.
 
 ```
@@ -67,6 +99,18 @@ insert_end(Z) = (h, i, !, Z, 0, 0, 0, 0)
 ```
 
 #### Insert a full pointed segment.
+
+```cpp
+Void Kedit::BufferCursor::write() noexcept {
+	if (this->segment_.full()) {
+		this->segment_ = *new BufferSegment(this->segment_);
+		this->index_ = 0;
+	}
+// ...
+	this->segment_.write(datum);
+// ...
+}
+```
 
 1. Attach a new segment after the pointed segment; then,
 2. switch the pointed segment to the new segment; then,
