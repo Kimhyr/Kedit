@@ -51,6 +51,8 @@ public:
 
 	Void prepend(BufferSegment &behind);
 
+	BufferSegment *getNextFilled();
+
 private:
 	Bool edited_;
 	Byte data_[CAPACITY];
@@ -76,8 +78,9 @@ public:
 	inline Nat column() const noexcept { return this->column_; }
 
 public:
-	constexpr Bool atEndOfSegment() const noexcept { return this->index_ + 1 == this->segment_.mass(); }
+	constexpr Bool atSegmentEnd() const noexcept { return this->index_ + 1 == this->segment_.mass(); }
 	constexpr Bool onNewLine() const noexcept { return this->segment_[this->index_] == '\n'; }
+	Bool atLineEnd() const noexcept;
 
 public:
 	Void write(Byte datum) noexcept;
@@ -111,6 +114,9 @@ private:
 
 private:
 	Void moveToLineStart() noexcept;
+	Void moveToLineEnd() noexcept;
+
+	Void setColumns() noexcept;
 };
 
 class Buffer {
