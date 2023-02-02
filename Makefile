@@ -13,7 +13,7 @@ BIN=$(BLDD)/$(NAME).exe
 
 # Build
 CC=clang++
-CFLGS=-std=c++20 -O3
+CFLGS=-std=c++20 -O2
 WFLGS=-Wall -Wextra
 FLGS=$(CFLGS) $(WFLGS) $(IFLGS)
 
@@ -30,7 +30,8 @@ r:$(BIN)
 	$(BIN)
 
 c:$(BLDD)
-	rm -rf $(OBJS) $(BIN)
+	rm -rf $(OBJD) $(BLDD) 
+	mkdir $(BLDD) $(OBJD)
 
 f:
 	clang-format -i $(SRCS) $(foreach D,$(DIRS),$(wildcard $(SRCD)/$(D)/*.hpp))

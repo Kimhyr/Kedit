@@ -17,6 +17,8 @@ Buffer::~Buffer() noexcept {
 Void Buffer::print() {
 	for (BufferSegment* segment = this->root_; segment;
 	     segment = segment->next()) {
+		if (segment->empty())
+			continue;
 		segment->print();
 	}
 }
@@ -25,14 +27,15 @@ Void Buffer::loadFile(const Sym* path) {
 	File file(path, "r");
 	if (file.empty())
 		file.write("\n");
-	BufferSegment* segment;
-	Int datum = file.get(); 
-	for (segment = this->root_;; segment = new BufferSegment(*segment)) {
+	BufferSegment* segment = this->root_;
+	Byte datum = file.get(); 
+	for (;; segment = new BufferSegment(*segment)) {
 		try {
-			for (; segment->mass() < BufferSegment::CAPACITY; datum = file.get()) {
+			for (;; datum = file.get()) {
 				if (datum == '\n')
 					++this->rows_;
-				segment->write(datum);
+				try { segment->write(datum); }
+				catch (ErrorCode) { break; }
 			}
 		} catch (ErrorCode) {
 			break;
@@ -50,6 +53,16 @@ Void BufferCursor::write(Bit bit) noexcept {
 			this->climb(*this->segment_.next());
 		else this->climb(*new BufferSegment(this->segment_));
 		this->segment_.fill(*this->segment_.prior(), (Bit*)this->pointer_);
+	} else if (this->beginning()) {
+		if (!this->segment_.prior()) {
+			puts("BREAK");
+			this->drop(*new BufferSegment(this->segment_));
+			this->segment_.print();
+		} else {
+			if (this->segment_.prior()->full())
+				this->drop(*new BufferSegment(this->segment_));
+			else this->drop(*this->segment_.prior());
+		}
 	} else {
 		if (!this->segment_.next()->empty())
 			new BufferSegment(this->segment_);
@@ -66,11 +79,11 @@ Void BufferCursor::write(Bit bit) noexcept {
 
 Void BufferCursor::erase() {
 	Bool nl = this->current() == '\n';
-	if (this->sleeping()) {
+	if (this->beginning()) {
 		if (!this->segment_.prior())
 			throw ErrorCode::OOR;
 		this->segment_.shift();
-		this->drop();
+		this->fall();
 	} else if (!this->hanging()) {
 		this->segment_.split((Bit*)this->pointer_);
 		--this->pointer_;
@@ -83,8 +96,8 @@ Void BufferCursor::erase() {
 	this->column_ = this->position_.column;
 }
 
-Void BufferCursor::drop() noexcept {
-	for (BufferSegment* curr = this->segment_.prior(); curr;
+Void BufferCursor::fall() noexcept {
+	for (BufferSegment* curr = this->segment_.prior(); curr != nil;
 	     curr = curr->prior()) {
 		if (curr->empty())
 			continue;
@@ -97,8 +110,7 @@ Void BufferCursor::drop() noexcept {
 // BuffeSegment
 
 BufferSegment::BufferSegment(BufferSegment& prior) noexcept
-	: prior_(&prior), edited_(false), data_(), end_(this->data_),
-	  next_(nil) {
+	: edited_(false), end_(this->data_), next_(nil) {
 	prior.next_ = this;
 	prior.prior_ = this->prior_;
 	this->prior_ = &prior;
@@ -137,8 +149,14 @@ Void BufferSegment::split(Bit* from) {
 
 Void BufferSegment::fill(BufferSegment& from, Bit* it) noexcept {
 	const Bit* end = from.end_;
-	for (; it != end; ++it, ++this->end_, --from.end_)
+	for (; it != end; ++it, ++this->end_, --from.end_) {
 		*this->end_ = *it;
+	}
+}
+
+Void BufferSegment::print() {
+	for (const Bit* it = this->data_; it != this->end_; ++it)
+		printf("%c", *it);
 }
 
 /////////////////////////////////mass/////////////////////////////////////////////

@@ -8,12 +8,12 @@ namespace Kedit {
 
 class BufferSegment {
 public:
-	static constexpr const Size CAPACITY = 8;
+	static constexpr const Size CAPACITY = 80;
 
 public:
 	inline BufferSegment() noexcept
-		: prior_(nil), edited_(false), data_(), end_(this->data_),
-		  next_(nil) {}
+		: prior_(0), edited_(false), end_(this->data_),
+		  next_(0) {}
 	BufferSegment(BufferSegment& prior) noexcept;
 
 	~BufferSegment() noexcept;
@@ -68,7 +68,7 @@ public:
 	
 	constexpr Bit current() const noexcept { return *this->pointer_; }
 	constexpr Length index() const noexcept { return this->pointer_ - this->segment_.start(); }
-	constexpr Bool sleeping() const noexcept { return this->pointer_ == this->segment_.start(); }
+	constexpr Bool beginning() const noexcept { return this->pointer_ == this->segment_.start(); }
 	constexpr Bool hanging() const noexcept { return this->pointer_ + 1 == this->segment_.end(); }
 
 public:
@@ -76,30 +76,38 @@ public:
 	Void erase();
 
 private:
-	BufferSegment &segment_;
+	BufferSegment& segment_;
 	const Bit* pointer_;
 	Position position_;
 	Length column_;
 
 private:
-	constexpr Void climb(const BufferSegment& segment) {
+	constexpr Void climb(BufferSegment& segment) {
 		this->segment_ = segment;
 		this->pointer_ = this->segment_.start();
 	}
 
-	Void drop() noexcept;
+	constexpr Void drop(BufferSegment& segment) {
+		this->segment_ = segment;
+		this->pointer_ = this->segment_.end() - 1;
+	}
+
+
+	Void fall() noexcept;
 };
 
 class Buffer {
 public:
 	inline Buffer(const Sym* filePath)
-		: root_(new BufferSegment()), cursor_(*this->root_), rows_(1) {
+		: root_(new BufferSegment), cursor_(*this->root_), rows_(1) {
 		this->loadFile(filePath);
 	}
 
 	~Buffer() noexcept;
 
 public:
+	inline const BufferSegment* root() const noexcept { return this->root_; }
+	inline BufferCursor& cursor() noexcept { return this->cursor_; }
 	inline Length rows() const noexcept { return this->rows_; }
 
 public:
