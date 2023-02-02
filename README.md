@@ -14,6 +14,7 @@ some rules I broke:
 * Using C casts to omit the const type qualifier;
 * using the "new" keyword
 * using 8-width tabs (tabs > spaces, fight me);
+* not making blank lines inside procedures;
 * using the `hpp` as a file extension rather than `h`;
 * not using inheritance ([I fucking hate inheritance](#why-i-hate-inheritance));
 * using raw pointers; and
