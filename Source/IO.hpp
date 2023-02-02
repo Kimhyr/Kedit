@@ -4,6 +4,7 @@
 #include "Error.hpp"
 
 #include <cstdio>
+#include <iostream>
 
 namespace Kedit {
 

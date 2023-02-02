@@ -7,6 +7,11 @@ namespace Kedit {
 ///////////////////////////////////////////////////////////////////////////////
 // Buffer
 
+Buffer::Buffer(const Sym* filePath)
+	: root_(new BufferSegment), cursor_(*this->root_), rows_(1) {
+	this->loadFile(filePath);
+}
+
 Buffer::~Buffer() noexcept {
 	for (BufferSegment* seg; this->root_; this->root_ = seg) {
 		seg = this->root_->next();
@@ -15,12 +20,15 @@ Buffer::~Buffer() noexcept {
 }
 
 Void Buffer::print() {
+	while (this->root_->prior())
+		this->root_ = this->root_->prior();
 	for (BufferSegment* segment = this->root_; segment;
 	     segment = segment->next()) {
 		if (segment->empty())
 			continue;
 		segment->print();
 	}
+	putchar('\n');
 }
 
 Void Buffer::loadFile(const Sym* path) {
@@ -34,8 +42,9 @@ Void Buffer::loadFile(const Sym* path) {
 			for (;; datum = file.get()) {
 				if (datum == '\n')
 					++this->rows_;
-				try { segment->write(datum); }
-				catch (ErrorCode) { break; }
+				try {
+					segment->write(datum);
+				} catch (ErrorCode) { break; }
 			}
 		} catch (ErrorCode) {
 			break;
@@ -48,61 +57,62 @@ Void Buffer::loadFile(const Sym* path) {
 // BufferCursor
 
 Void BufferCursor::write(Bit bit) noexcept {
-	if (this->segment_.full() && this->hanging()) {
-		if (this->segment_.next()->empty())
-			this->climb(*this->segment_.next());
-		else this->climb(*new BufferSegment(this->segment_));
-		this->segment_.fill(*this->segment_.prior(), (Bit*)this->pointer_);
-	} else if (this->beginning()) {
-		if (!this->segment_.prior()) {
-			puts("BREAK");
-			this->drop(*new BufferSegment(this->segment_));
-			this->segment_.print();
-		} else {
-			if (this->segment_.prior()->full())
-				this->drop(*new BufferSegment(this->segment_));
-			else this->drop(*this->segment_.prior());
+	// not doing `this->hanging() && this->segment_->full()`
+	// because it makes a bug.
+	if (this->hanging()) {
+		std::cout << "write hanging\n";
+		if (this->segment_->full()) {
+			std::cout << "write full\n";
+			if (!this->segment_->next()->empty())
+				new BufferSegment(*this->segment_);
+			this->climb(*this->segment_->next());
 		}
-	} else {
-		if (!this->segment_.next()->empty())
-			new BufferSegment(this->segment_);
-		this->segment_.next()->fill(*this->segment_.prior(), (Bit*)this->pointer_);
-	}
-	this->segment_.write(bit);
+	} else if (this->resting()) {
+		std::cout << "write resting\n";
+		if (this->segment_->prior() == nil)
+			this->segment_->prepend(*new BufferSegment);
+		else if (!this->segment_->prior()->empty())
+			new BufferSegment(*this->segment_->prior());
+		this->drop(*this->segment_->prior());
+	} else if (this->climbing())
+		this->segment_->split((Bit*)this->pointer_);
+	this->segment_->write(bit);
+	++this->pointer_;
 	if (bit == '\n') {
 		++this->position_.row;
 		this->position_.column = 0;
 	} else ++this->position_.column;
 	this->column_ = this->position_.column;
-	++this->pointer_;
 }
 
 Void BufferCursor::erase() {
 	Bool nl = this->current() == '\n';
-	if (this->beginning()) {
-		if (!this->segment_.prior())
-			throw ErrorCode::OOR;
-		this->segment_.shift();
+	if (this->resting()) {
+		std::cout << "erase resting\n";
+		this->segment_->shift();
 		this->fall();
 	} else if (!this->hanging()) {
-		this->segment_.split((Bit*)this->pointer_);
+		std::cout << "erase not hanging\n";
+		this->segment_->split((Bit*)this->pointer_);
 		--this->pointer_;
+	} else {
+		std::cout << "erase hanging\n";
 	}
-	this->segment_.erase();
+	this->segment_->erase();
 	if (nl) {
-		++this->position_.row;
-		this->position_.column = 1;
+		--this->position_.row;
+		this->position_.column = this->segment_->mass() - 1;
 	} else ++this->position_.column;
 	this->column_ = this->position_.column;
 }
 
 Void BufferCursor::fall() noexcept {
-	for (BufferSegment* curr = this->segment_.prior(); curr != nil;
+	for (BufferSegment* curr = this->segment_->prior(); curr != nil;
 	     curr = curr->prior()) {
 		if (curr->empty())
 			continue;
-		this->segment_ = *curr;
-		this->pointer_ = this->segment_.end() - 1;
+		this->segment_ = curr;
+		this->pointer_ = this->segment_->end() - 1;
 	}
 }
 
@@ -124,7 +134,7 @@ BufferSegment::~BufferSegment() noexcept {
 }
 
 Void BufferSegment::write(Bit bit) {
-	if (this->mass() == CAPACITY)
+	if (this->full())
 		throw ErrorCode::OVERFLOW;
 	*this->end_ = bit;
 	++this->end_;
@@ -139,7 +149,6 @@ Void BufferSegment::erase() {
 Void BufferSegment::shift() {
 	for (Bit* it = this->data_ + 1; it != this->end_; ++it)
 		it[-1] = *it;
-	--this->end_;
 }
 
 Void BufferSegment::split(Bit* from) {
@@ -149,9 +158,14 @@ Void BufferSegment::split(Bit* from) {
 
 Void BufferSegment::fill(BufferSegment& from, Bit* it) noexcept {
 	const Bit* end = from.end_;
-	for (; it != end; ++it, ++this->end_, --from.end_) {
+	for (; it != end; ++it, ++this->end_, --from.end_)
 		*this->end_ = *it;
-	}
+}
+
+Void BufferSegment::prepend(BufferSegment& prior) {
+	prior.next_ = this;
+	prior.prior_ = this->prior_;
+	this->prior_ = &prior;
 }
 
 Void BufferSegment::print() {
@@ -159,19 +173,4 @@ Void BufferSegment::print() {
 		printf("%c", *it);
 }
 
-/////////////////////////////////mass/////////////////////////////////////////////
-// A '\n' may occur before `column_` just brak. i dont give a shit nm. I
-// havent slept yet bro I spelpt at ~5pm+ 30 Jan 2023; slept for like 4 hours
-// and stayed up. I'm in school (lunch) at 31 Jan 2023 12:29pm westwood
-// highschool, south carolina.
-// i've never been in an actual computer science class. only one with like
-// html and fuckign karel???? KAREL dumabss language. its just js but with
-// stupid "moveRight" functions. teacher even corrected me because i didnt
-// use semicolons???? and i had "abstracted" too much or something (ii split
-// up a function into like 5). I didnt even get a single class i chose this
-// school year. french -> spanish, comp sci -> biology/mwh or sumshit. And im
-// stuck in a slow ass intermediate algebra class. I DO CALCULUS IN MY FRE TIM,
-// its my fault that im in interm. algebra tho 'cause i didnt do my work nor
-// cared. I have a 59 and 50 for first and second quarter of english 2
-// respectively, BUT I GOT a 96 on the end of course exam. i hate shakesperae
 }

@@ -2,13 +2,16 @@
 
 #include "Types.hpp"
 
-#include <stdio.h>
+#include <iostream>
 
 namespace Kedit {
 
 class BufferSegment {
 public:
-	static constexpr const Size CAPACITY = 80;
+	static constexpr const Size CAPACITY = 8;
+
+// 0
+// 0 1
 
 public:
 	inline BufferSegment() noexcept
@@ -29,7 +32,7 @@ public:
 
 	constexpr Size mass() const noexcept { return this->end_ - this->data_; }
 	constexpr Bool full() const noexcept { return this->mass() == CAPACITY; }
-	constexpr Bool empty() const noexcept { return this->end_ == this->data_; }
+	constexpr Bool empty() const noexcept { return this->end_ == this->start(); }
 
 	inline Bit& operator [](Nat index) noexcept { return this->data_[index]; }
 
@@ -41,7 +44,7 @@ public:
 	Void split(Bit* from);
 	Void fill(BufferSegment& from, Bit* it) noexcept;
 	
-	Void prepend(BufferSegment& behind);
+	Void prepend(BufferSegment& prior);
 
 	Void print(); 
 
@@ -55,41 +58,44 @@ private:
 
 class BufferCursor {
 public:
-	inline BufferCursor(BufferSegment &segment)
-		: segment_(segment), pointer_(segment.start()), position_(1, 1) {}
+	inline BufferCursor(BufferSegment& segment)
+		: segment_(&segment), pointer_(segment.start()), position_(1, 1) {
+	}
 
 	~BufferCursor() = default;
 
 public:
-	inline const BufferSegment& segment() const noexcept { return this->segment_; }
+	inline const BufferSegment& segment() const noexcept { return *this->segment_; }
 	inline const Bit* pointer() const noexcept { return this->pointer_; }
 	inline const Position& position() const noexcept { return this->position_; }
 	inline Length column() const noexcept { return this->column_; }
 	
 	constexpr Bit current() const noexcept { return *this->pointer_; }
-	constexpr Length index() const noexcept { return this->pointer_ - this->segment_.start(); }
-	constexpr Bool beginning() const noexcept { return this->pointer_ == this->segment_.start(); }
-	constexpr Bool hanging() const noexcept { return this->pointer_ + 1 == this->segment_.end(); }
+	constexpr Length index() const noexcept { return this->pointer_ - this->segment_->start(); }
+	constexpr Bool holding() const noexcept { return this->pointer_ == this->segment_->start() - 1; }
+	constexpr Bool resting() const noexcept { return this->pointer_ == this->segment_->start(); }
+	constexpr Bool hanging() const noexcept { return this->pointer_ + 1 == this->segment_->end(); }
+	constexpr Bool climbing() const noexcept { return !this->holding() && !this->hanging(); }
 
 public:
 	Void write(Bit bit = ' ') noexcept;
 	Void erase();
 
 private:
-	BufferSegment& segment_;
+	BufferSegment* segment_;
 	const Bit* pointer_;
 	Position position_;
 	Length column_;
 
 private:
 	constexpr Void climb(BufferSegment& segment) {
-		this->segment_ = segment;
-		this->pointer_ = this->segment_.start();
+		this->segment_ = &segment;
+		this->pointer_ = this->segment_->start();
 	}
 
 	constexpr Void drop(BufferSegment& segment) {
-		this->segment_ = segment;
-		this->pointer_ = this->segment_.end() - 1;
+		this->segment_ = &segment;
+		this->pointer_ = this->segment_->end() - 1;
 	}
 
 
@@ -98,15 +104,12 @@ private:
 
 class Buffer {
 public:
-	inline Buffer(const Sym* filePath)
-		: root_(new BufferSegment), cursor_(*this->root_), rows_(1) {
-		this->loadFile(filePath);
-	}
+	Buffer(const Sym* filePath);
 
 	~Buffer() noexcept;
 
 public:
-	inline const BufferSegment* root() const noexcept { return this->root_; }
+	inline BufferSegment* root() noexcept { return this->root_; }
 	inline BufferCursor& cursor() noexcept { return this->cursor_; }
 	inline Length rows() const noexcept { return this->rows_; }
 
