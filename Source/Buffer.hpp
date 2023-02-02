@@ -1,130 +1,117 @@
-// Tasks:
-// 	* Handle height changes due to erasing.
-
 #pragma once
 
 #include "Types.hpp"
+
+#include <stdio.h>
 
 namespace Kedit {
 
 class BufferSegment {
 public:
-	static constexpr const Nat CAPACITY = 80;
+	static constexpr const Size CAPACITY = 8;
 
 public:
 	inline BufferSegment()
-		: edited_(false), mass_(0), prior_(nil), next_(nil) {}
+		: prior_(nil), edited_(false), data_(), end_(this->data_),
+		  next_(nil) {}
+	BufferSegment(BufferSegment& prior) noexcept;
 
-	inline BufferSegment(BufferSegment &prior)
-		: edited_(false), mass_(0), prior_(&prior) {
-		prior.next_ = this;
-		prior.prior_ = this->prior_;
-		this->prior_ = &prior;
-	}
+	~BufferSegment() noexcept;
 
-
-	inline ~BufferSegment() {
-		if (this->prior_)
-			this->prior_->next_ = this->next_;
-		if (this->next_)
-			this->next_->prior_ = this->prior_;
-	}
 public:
+	inline BufferSegment* prior() noexcept { return this->prior_; }
 	inline Bool edited() const noexcept { return this->edited_; }
-	inline const Byte *data() const noexcept { return this->data_; }
-	inline Nat mass() const noexcept { return this->mass_; }
-	inline BufferSegment *prior() noexcept { return this->prior_; }
-	inline BufferSegment *next() noexcept { return this->next_; }
-	inline Byte &operator [](Nat index) noexcept { return this->data_[index]; }
+	inline const Bit* data() const noexcept { return this->data_; }
+	inline const Bit* end() const noexcept { return this->end_; }
+	inline BufferSegment* next() noexcept { return this->next_; }
+	
+	inline const Bit* start() const noexcept { return this->data_; }
 
-public:
+	constexpr Size mass() const noexcept { return this->end_ - this->data_; }
 	constexpr Bool full() const noexcept { return this->mass() == CAPACITY; }
+	constexpr Bool empty() const noexcept { return this->end_ == this->data_; }
+
+	inline Bit& operator [](Nat index) noexcept { return this->data_[index]; }
 
 public:
-	Void write(Byte datum);
-
-	Void erase(Byte eraser);
+	Void write(Bit bit);
+	Void erase();
 
 	Void shift();
+	Void split(Bit* from);
+	Void fill(BufferSegment& from, Bit* it) noexcept;
 	
-	Void split(Nat index);
+	Void prepend(BufferSegment& behind);
 
-	Void prepend(BufferSegment &behind);
-
-	BufferSegment *getNextFilled();
+	Void print(); 
 
 private:
+	BufferSegment* prior_;
 	Bool edited_;
-	Byte data_[CAPACITY];
-	Nat mass_;
-	BufferSegment *prior_;
-	BufferSegment *next_;
-
-private:
-	Void fill(const Byte *data, Nat count) noexcept;
+	Bit data_[CAPACITY];
+	Bit* end_;
+	BufferSegment* next_;
 };
 
 class BufferCursor {
 public:
 	inline BufferCursor(BufferSegment &segment)
-		: segment_(segment), index_(0), position_(1, 1), column_(1) {}
+		: segment_(segment), pointer_(segment.start()), position_(1, 1) {}
 
 	~BufferCursor() = default;
 
 public:
-	inline const BufferSegment &segment() const noexcept { return this->segment_; }
-	inline Nat index() const noexcept { return this->index_; }
-	inline const Position &position() const noexcept { return this->position_; }
-	inline Nat column() const noexcept { return this->column_; }
+	inline const BufferSegment& segment() const noexcept { return this->segment_; }
+	inline const Bit* pointer() const noexcept { return this->pointer_; }
+	inline const Position& position() const noexcept { return this->position_; }
+	inline Length column() const noexcept { return this->column_; }
+	
+	constexpr Bit current() const noexcept { return *this->pointer_; }
+	constexpr Length index() const noexcept { return this->pointer_ - this->segment_.start(); }
+	constexpr Bool sleeping() const noexcept { return this->pointer_ == this->segment_.start(); }
+	constexpr Bool hanging() const noexcept { return this->pointer_ + 1 == this->segment_.end(); }
 
 public:
-	constexpr Bool atSegmentEnd() const noexcept { return this->index_ + 1 == this->segment_.mass(); }
-	constexpr Bool onNewLine() const noexcept { return this->segment_[this->index_] == '\n'; }
-	Bool atLineEnd() const noexcept;
-
-public:
-	Void write(Byte datum) noexcept;
-
-	// Throws "false" if "!this->segment_.prior()".
-	// Returns true if erased a "\n".
-	Void erase(Byte eraser = ' ');
-
-	Void moveUp();
-	
-	Void moveDown(Nat lastRow);
-	
-	Void moveRight();
-	
-	Void moveLeft();
-
-	Void write(const Byte *data, Nat length);
-
-public:
-	// TODO: Experiment O(log(n)) ~> O(1).
-	// 	* For each segment, there exists a list of "Line"s containing:
-	// 		- start: Index, and
-	//		- column: Nat.
-	Nat getColumn() const noexcept;
+	Void write(Bit bit = ' ') noexcept;
+	Void erase() noexcept;
 
 private:
 	BufferSegment &segment_;
-	Nat index_;
+	const Bit* pointer_;
 	Position position_;
-	Nat column_;
+	Length column_;
 
 private:
-	Void moveToLineStart() noexcept;
-	Void moveToLineEnd() noexcept;
+	constexpr Void climb(const BufferSegment& segment) {
+		this->segment_ = segment;
+		this->pointer_ = this->segment_.start();
+	}
 
-	Void setColumns() noexcept;
+	Void drop() noexcept;
 };
 
 class Buffer {
+public:
+	inline Buffer(const Sym* filePath)
+		: root_(new BufferSegment()), cursor_(*this->root_), rows_(1) {
+		this->loadFile(filePath);
+	}
+
+	~Buffer() noexcept;
+
+public:
+	inline Length rows() const noexcept { return this->rows_; }
+
+public:
+	Void print();
 
 private:
-	Nat lines_;
-	BufferSegment root_;
+	BufferSegment* root_;
 	BufferCursor cursor_;
+	Length rows_;
+
+private:
+	Void loadFile(const Sym *path);
 };
 
 }

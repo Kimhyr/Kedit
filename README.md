@@ -1,164 +1,49 @@
 # Kedit
 
-Kedit is an experimental text editor written from scratch (that is, without a
-C++ standard library). Instead of a dynamic array, a rope, or a gapped array,
-Kedit uses a (what I call) "pointed segmented doubly linked list" for it's buffer.
+Kedit is an experimental text editor written from scratch. Instead of a dynamic
+array, a rope, or a gapped array, Kedit uses a (what I call) "pointed segmented
+doubly linked list" for it's buffer.
 
 The buffer is inspired by paged file systems, and utilizes the idea of
 preallocated memory per node. This ensures swift string manipulation per
 in-segment appendation. For more specifics on the algorithms, go to the
 [Algorithm](#algorithm) section.
 
-## Algorithm
+Also, I know I broke many modern C++ rules. I don't give a shit. But here are
+some rules I broke:
 
-Each section will begin with the source code of the implementation followed by
-decision branches in which begins with the decision branches' snippet of the
-implementation followed by the steps it takes, and a 10/10 "visualization" of
-the snippet's process.
+* Using C casts to omit the const type qualifier;
+* using the "new" keyword
+* using 8-width tabs (tabs > spaces, fight me);
+* using the `hpp` as a file extension rather than `h`;
+* not using inheritance ([I fucking hate inheritance](#why-i-hate-inheritance));
+* using raw pointers; and
+* not using the C++ standard library (I use the C standard library).
 
-### Writing
+## Why I hate inheritance
 
-`Source/Buffer.cpp`
+I don't need to give a reason why. If you don't know why, you probably work for
+a megacorp., or use some scripting/GC language that abstracts everything
+(e.g. Python, TypeScript, and C#). I am pure; I like imperative, Rust-like
+OOP, and funtional (never logical) programming langauges.
 
-```cpp
-Void Kedit::BufferCursor::write() noexcept {
-	if (this->segment_.full()) {
-		this->segment_ = *new BufferSegment(this->segment_);
-		this->index_ = 0;
-	} else if (this->index_ == 0) {
-		this->segment_.prepend(*new BufferSegment());
-		this->segment_ = *this->segment_.prior();
-	} else if (!this->atEndOfSegment())
-		this->segment_.split(this->index_);
-	this->segment_.write(datum);
-	++this->index_;
-	if (datum == '\n') {
-		++this->position_.row;
-		this->position_.column = 0;
-	}
-	++this->position_.column;
-	this->column_ = this->position_.column;
-}
-```
+I understand that I'm using C++ (an OOP language), but that doesn't mean I
+can't not use all it's features.
 
-#### Write at the start of the pointed segment.
-
-```cpp
-Void Kedit::BufferCursor::write() noexcept {
-// ...
-	if (this->index_ == 0) {
-		this->segment_.prepend(*new BufferSegment());
-		this->segment_ = *this->segment_.prior();
-	}
-// ...
-	this->segment_.write(datum);
-// ...
-}
-```
-
-1. Attach a new segment before the pointed segment; then,
-2. switch the pointed segment to the new segment; finally,
-3. insert the symbol in the pointed segment (at index `0`).
-
-```
-segment = (h, i, !, 0, 0, 0, 0, 0)
-insert_start(Z) = (Z, 0, 0, 0, 0, 0, 0, 0)->(h, i, !, 0, 0, 0, 0, 0)
-```
-
-#### Write within the pointed segment.
-
-```cpp
-Void Kedit::BufferCursor::write() noexcept {
-// ...
-	if (!this->atEndOfSegment())
-		this->segment_.split(this->index_);
-// ...
-	this->segment_.write(datum);
-// ...
-}
-```
-
-1. Split the pointed segment from the pointed segment index forwards; then,
-2. append the symbol to the pointed segment.
-
-```
-segment = (h, i, !, 0, 0, 0, 0, 0)
-insert_within(Z) = (h, Z, 0, 0, 0, 0, 0, 0)->(i, !, 0, 0, 0, 0, 0, 0)
-```
-
-#### Write at the end of the pointed segment.
-
-```cpp
-Void Kedit::BufferCursor::write() noexcept {
-// ...
-	this->segment_.write(datum);
-// ...
-}
-```
-
-1. Append the symbol to the pointed segment.
-
-```
-segment = (h, i, !, 0, 0, 0, 0, 0)
-insert_end(Z) = (h, i, !, Z, 0, 0, 0, 0)
-```
-
-#### Write a full pointed segment.
-
-```cpp
-Void Kedit::BufferCursor::write() noexcept {
-	if (this->segment_.full()) {
-		this->segment_ = *new BufferSegment(this->segment_);
-		this->index_ = 0;
-	}
-// ...
-	this->segment_.write(datum);
-// ...
-}
-```
-
-1. If the next segment is not empty, attach a new segment; then,
-2. switch the pointed segment to the new segment; then,
-3. update the pointed segment index to 0; finally,
-4. insert the symbol in the pointed segment.
-
-```
-segment = (h, i, !, !, !, !, !, !)
-insert_full(Z) = (h, i, !, !, !, !, !, !)->(Z, 0, 0, 0, 0, 0, 0, 0)
-```
-
-### Erasing
-
-`Source/Buffer.cpp`
-
-```cpp
-Bool Kedit::BufferCursor::erase(Byte eraser) {
-	
-}
-```
-
-#### Erase at the start of the pointed segment.
-
-1. If there is no prior segment, throw; then,
-2. shift the pointed segment to the left; finally,
-4. switch the pointed segment to the last segment with mass, or the root
-	 segment.
-
-#### Erase within the pointed segment.
-
-1. Split the pointed segment from the pointed segment index forwards; then,
-2. erase the symbol from the pointed segment.
-
-### Traversing
+I like C, but I hate the way I need to name things. For example,
+"buffer_segment_write" or "write_to_buffer_segment" for procedure names (I
+prefer the right one), and "BUFFER_FLAG_WRITABLE" or "WRITABLE_BUFFER_FLAG" for
+enum names. I fucking hate the naming. And you can't specify the type size of
+an enum. And there are no namespaces so library procedures are like
+"lib_shit_your_pants". And the fact that there is not standard in naming shit.
 
 ## Building
 
 **WARNING**: This project is currently being developed under the pure support
-of UNIX operating systems; this project won't work on Windows once usable.
+of UNIX-like operating systems; this project won't work on Windows once usable.
 
 1. First, you must have these installed:
 	* a C++ compiler that is capable of all C++20 language features
 	  (f.e. `clang++`, and `g++`), and
 	* GNU Make.
-
 2. Run `make`.

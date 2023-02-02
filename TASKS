@@ -1,2 +1,20 @@
 [ ] Search up how are decision trees are represented in discrete mathematics.
 [ ] Make a Reddit post on r/Vent about how I got a 96 on the EOC with failing grades.
+
+* Keybinds should be modal.
+	- Keybinds aren't based off their operation;
+	  keybinds are based off how good the location is.
+	- CAPS s the mode switcher.
+		* insert and
+		* normal mode.
+	- Keymaps:
+		* UnitMovement:
+			- J - Move down
+			- K - Move up
+			- L - Move right
+			- ; - Move left
+		* BlockMovement:
+			- CTRL + <UnitMovement>
+		* SelectMovement:
+			- SHIFT + <BlockMovement>
+

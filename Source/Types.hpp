@@ -4,9 +4,13 @@
 
 namespace Kedit {
 
+using Bit = Sym8;
+using Length = Nat;
+using Size = Nat;
+
 struct Position {
-	Nat row;
-	Nat column;
+	Length row;
+	Length column;
 
 	Position() = default;
 
@@ -15,18 +19,18 @@ struct Position {
 };
 
 struct Dimension {
-	Nat width;
-	Nat height;
+	Length width;
+	Length height;
 
 	inline Dimension(Nat width, Nat height)
 		: width(width), height(height) {}
 };
 
-struct Rect {
+struct Rectangle {
 	Position position;
 	Dimension dimension;
 
-	inline Rect(const Position &position, const Dimension &dimension)
+	inline Rectangle(const Position &position, const Dimension &dimension)
 		: position(position), dimension(dimension) {}
 };
 

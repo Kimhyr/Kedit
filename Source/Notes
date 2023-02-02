@@ -1,0 +1,67 @@
+## Definitions
+
+Bit			- The most basic unit of text (a symbol).
+Byte		- A collection of bits to form a symbol (for UTF encoding).
+
+Write 		- Insert a symbol into a segment.
+Erase 		- Delete a symbol in a segment by inserting NUL.
+
+Shift		- Move the segment's content once to the left without moving anything
+			  into the prior segment.
+Split		- Create a new segment forwards, and move all data from the given index
+			  to the new segment.
+
+Climb		- Move to the given segment.
+		  	  If a segment is not given, move to the next segment.
+Jump		- Move to next segment with mass.
+Drop		- Move to the prior segment with mass.
+
+Hanging		- At the end of a segment.
+Sleeping	- At the start of a segment.
+
+## Writing
+
+```klang
+procedure write(bit: Bit) {
+	if ('segment.full & 'hanging) {
+		if ('segment.next.empty)
+			'climb()
+		else 'climb(Segment::allocate(.prior = 'segment));
+		'segment.fill(@'segment.prior, 'index);
+	}
+	else {
+		if (!'segment.next.empty)
+			Segment::allocate(.prior = segment);
+		'segment.next.fill(@'segment.prior, 'index);
+	}
+	'segment.write(bit);
+	if (bit == \"\n") {
+		'position.row += 1;
+		'position.column = 1;
+	} else 'position.column += 1;
+	'column = 'position.column;
+	'index += 1;
+}
+```
+
+## Erasing
+
+```klang
+procedure erase(eraser: Bit) {
+	let nl: Bool = 'current == \"\n";
+	if ('sleeping) {
+		'segment.shift();
+		catch 'drop(); \\ Ignore throw.
+	}
+	else if (!'hanging) {
+		'segment.split('index);
+		'index -= 1;
+	}
+	'segment.erase(eraser);
+	if (nl) {
+		'position.row += 1;
+		'position.column = 1;
+	} else 'position.column += 1;
+	'column = 'position.column;
+}
+```
