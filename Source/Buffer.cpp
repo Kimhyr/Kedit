@@ -1,13 +1,13 @@
 #include "Buffer.hpp"
 
-#include <stdio.h>
+#include "IO.hpp"
 
 namespace Kedit {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Buffer
 
-Buffer::~Buffer() noexcept{
+Buffer::~Buffer() noexcept {
 	for (BufferSegment* seg; this->root_; this->root_ = seg) {
 		seg = this->root_->next();
 		delete this->root_;
@@ -22,28 +22,23 @@ Void Buffer::print() {
 }
 
 Void Buffer::loadFile(const Sym* path) {
-	FILE* file = fopen(path, "r");
-	if (!file)
-		throw false;
-	/*
-	if (!file.size) {
-		fprintf(file, "\n");
-	}
-	*/
+	File file(path, "r");
+	if (file.empty())
+		file.write("\n");
 	BufferSegment* segment;
-	Int datum = fgetc(file); 
+	Int datum = file.get(); 
 	for (segment = this->root_;; segment = new BufferSegment(*segment)) {
-		for (; segment->mass() < BufferSegment::CAPACITY; datum = fgetc(file)) {
-			if (datum == EOF)
-				goto Epilogue;
-			if (datum == '\n')
-				++this->rows_;
-			segment->write(datum);
+		try {
+			for (; segment->mass() < BufferSegment::CAPACITY; datum = file.get()) {
+				if (datum == '\n')
+					++this->rows_;
+				segment->write(datum);
+			}
+		} catch (ErrorCode) {
+			break;
 		}
 	}
-Epilogue:
-	if (fclose(file) == -1)
-		throw false;
+	file.close();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,9 +64,11 @@ Void BufferCursor::write(Bit bit) noexcept {
 	++this->pointer_;
 }
 
-Void BufferCursor::erase() noexcept {
+Void BufferCursor::erase() {
 	Bool nl = this->current() == '\n';
 	if (this->sleeping()) {
+		if (!this->segment_.prior())
+			throw ErrorCode::OOR;
 		this->segment_.shift();
 		this->drop();
 	} else if (!this->hanging()) {
@@ -116,14 +113,14 @@ BufferSegment::~BufferSegment() noexcept {
 
 Void BufferSegment::write(Bit bit) {
 	if (this->mass() == CAPACITY)
-		throw false;
+		throw ErrorCode::OVERFLOW;
 	*this->end_ = bit;
 	++this->end_;
 }
 
 Void BufferSegment::erase() {
 	if (this->empty())
-		throw false;
+		throw ErrorCode::UNDERFLOW;
 	--this->end_;
 }
 

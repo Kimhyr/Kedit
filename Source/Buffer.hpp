@@ -11,7 +11,7 @@ public:
 	static constexpr const Size CAPACITY = 8;
 
 public:
-	inline BufferSegment()
+	inline BufferSegment() noexcept
 		: prior_(nil), edited_(false), data_(), end_(this->data_),
 		  next_(nil) {}
 	BufferSegment(BufferSegment& prior) noexcept;
@@ -73,7 +73,7 @@ public:
 
 public:
 	Void write(Bit bit = ' ') noexcept;
-	Void erase() noexcept;
+	Void erase();
 
 private:
 	BufferSegment &segment_;
