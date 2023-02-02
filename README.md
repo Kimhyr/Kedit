@@ -31,11 +31,11 @@ I understand that I'm using C++ (an OOP language), but that doesn't mean I
 can't not use all it's features.
 
 I like C, but I hate the way I need to name things. For example,
-"buffer_segment_write" or "write_to_buffer_segment" for procedure names (I
-prefer the right one), and "BUFFER_FLAG_WRITABLE" or "WRITABLE_BUFFER_FLAG" for
+`buffer_segment_write` or `write_to_buffer_segment` for procedure names (I
+prefer the right one), and `BUFFER_FLAG_WRITABLE` or `WRITABLE_BUFFER_FLAG` for
 enum names. I fucking hate the naming. And you can't specify the type size of
 an enum. And there are no namespaces so library procedures are like
-"lib_shit_your_pants". And the fact that there is not standard in naming shit.
+`lib_shit_your_pants`. And the fact that there is not standard in naming shit.
 
 ## Building
 
