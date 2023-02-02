@@ -1,20 +1,21 @@
 [ ] Search up how are decision trees are represented in discrete mathematics.
 [ ] Make a Reddit post on r/Vent about how I got a 96 on the EOC with failing grades.
+[ ] Create a wrapper for `stdio.h`.
 
 * Keybinds should be modal.
-	- Keybinds aren't based off their operation;
+	- Keybinds aren't based off their operation (e.g. `b` for "back");
 	  keybinds are based off how good the location is.
-	- CAPS s the mode switcher.
+	- CAPS is the mode switcher.
 		* insert and
 		* normal mode.
 	- Keymaps:
-		* UnitMovement:
+		* BitMovement:
 			- J - Move down
 			- K - Move up
 			- L - Move right
 			- ; - Move left
-		* BlockMovement:
-			- CTRL + <UnitMovement>
-		* SelectMovement:
-			- SHIFT + <BlockMovement>
+		* ByteMovement (move per token/line):
+			- CTRL + [BitMovement]
+		* SelectMovement ():
+			- SHIFT + [BitMovement|BlockMovement]
 
