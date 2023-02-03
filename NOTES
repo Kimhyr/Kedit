@@ -1,4 +1,4 @@
-## Definitions
+# Definitions
 
 Bit			- The most basic unit of text (a symbol).
 Byte		- A collection of bits to form a symbol (for UTF encoding).
@@ -39,3 +39,23 @@ If the cursor is holding, and there exist a prior node, shift the segment, and
 fall; if there does not exist a prior node, throw an error.
 
 If the cursor is climbing, split the segment. 
+
+## Keybindings
+
+* Keybinds should be modal.
+* Keybinds aren't based off their operation (e.g. `b` for "back");
+  keybinds are based off how good the location is.
+* CAPS is the mode switcher.
+	- insert and
+	- normal mode.
+* Keymaps:
+	- BitMovement:
+		* J - Move down
+		* K - Move up
+		* L - Move right
+		* ; - Move left
+	- ByteMovement (move per token/line):
+		* CTRL + [BitMovement]
+	- SelectMovement ():
+		* SHIFT + [BitMovement|BlockMovement]
+

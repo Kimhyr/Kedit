@@ -2,15 +2,9 @@
 
 #include "Types.hpp"
 #include "Error.hpp"
-
-#include <cstdio>
-#include <iostream>
+#include "C.hpp"
 
 namespace Kedit {
-
-class  IOMarker {
-	
-};
 
 class File {
 public:

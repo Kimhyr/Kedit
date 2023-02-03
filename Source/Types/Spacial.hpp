@@ -1,10 +1,12 @@
+// Simple types for specifying locations, sizes, and other spacial related
+// measurements, though all measurements are spacial related.
+
 #pragma once
 
-#include "Definitions.hpp"
+#include "Primitives.hpp"
 
 namespace Kedit {
 
-using Bit = Sym8;
 using Length = Nat;
 using Size = Nat;
 

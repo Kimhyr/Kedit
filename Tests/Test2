@@ -1,6 +1,6 @@
 #include "Buffer.hpp"
 
-#include "File.hpp"
+#include "IO.hpp"
 
 namespace Kedit {
 
@@ -99,17 +99,6 @@ Void BufferCursor::erase() {
 	} else ++this->position_.column;
 	this->column_ = this->position_.column;
 }
-
-Void BufferCursor::climb(BufferSegment& segment) noexcept {
-	this->segment_ = &segment;
-	this->pointer_ = this->segment_->start();
-}
-
-Void BufferCursor::drop(BufferSegment& segment) noexcept {
-	this->segment_ = &segment;
-	this->pointer_ = this->segment_->end() - 1;
-}
-
 
 Void BufferCursor::fall() noexcept {
 	for (BufferSegment* curr = this->segment_->prior(); curr != nil;

@@ -1,8 +1,12 @@
+// Redefinitions of primitive types.
+
 #pragma once
 
 #define nil nullptr
 
 namespace Kedit {
+
+using Bit = char;
 
 using Void = void;
 

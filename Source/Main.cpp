@@ -1,13 +1,10 @@
 #include "Buffer.hpp"
-
 #include "Error.hpp"
-
-#include <iostream>
 
 using namespace Kedit;
 
 Int32 main() {
-	Buffer buffer("/home/k/Projects/Kedit/Tests/Test1.txt");
+	Buffer buffer("/home/k/Projects/Kedit/Tests/Test1");
 	buffer.print();
 	puts("\n==========================");
 	try {
