@@ -12,7 +12,7 @@ Also, I know I broke many modern C++ rules. I don't give a shit. But here are
 some rules I broke:
 
 * Using C casts to omit the const type qualifier;
-* using the "new" keyword
+* using the `new` keyword
 * using 8-width tabs (tabs > spaces, fight me);
 * not making blank lines inside procedures;
 * using the `hpp` as a file extension rather than `h`;
@@ -35,7 +35,7 @@ I like C, but I hate the way I need to name things. For example,
 prefer the right one), and `BUFFER_FLAG_WRITABLE` or `WRITABLE_BUFFER_FLAG` for
 enum names (right one also). I fucking hate the naming. And you can't specify the type size of
 an enum. And there are no namespaces so library procedures are like
-`lib_shit_your_pants`. And the fact that there is not standard in naming shit.
+`lib_shit_your_pants`. And the fact that there is no standard in naming shit.
 
 ## Building
 
