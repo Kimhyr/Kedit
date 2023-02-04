@@ -2,8 +2,10 @@
 // measurements, though all measurements are spacial related.
 
 #pragma once
+#ifndef KEDIT_SPACIAL_HPP
+#define KEDIT_SPACIAL_HPP
 
-#include "Primitives.hpp"
+#include "Primitive.hpp"
 
 namespace Kedit {
 
@@ -37,3 +39,5 @@ struct Rectangle {
 };
 
 }
+
+#endif

@@ -11,6 +11,8 @@
 // ============================================================================
 
 #pragma once
+#ifndef KEDIT_BUFFER_HPP
+#define KEDIT_BUFFER_HPP
 
 #include "Types/Spacial.hpp"
 #include "C.hpp"
@@ -20,7 +22,7 @@ namespace Kedit {
 class BufferSegment {
 public:
 	// The amount of bits the segment can hold.
-	static constexpr const Size CAPACITY = 80;
+	static constexpr const Size CAPACITY = 4;
 
 public:
 	inline BufferSegment() noexcept
@@ -108,17 +110,17 @@ public:
 	// The position the cursor is on relative to its segment.
 	constexpr Length index() const noexcept { return this->pointer_ - this->segment_->start(); }
 	
-	// The cursor is at 1 step before the start of its segment.
+	// The cursor is at S[-1].
 	constexpr Bool holding() const noexcept { return this->pointer_ == this->segment_->start() - 1; }
 	
-	// The cursor is at the start of its segment.
+	// The cursor is at S[0].
 	constexpr Bool resting() const noexcept { return this->pointer_ == this->segment_->start(); }
-	
-	// The cursor is at 1 step after the end of its segment.
+
+	// The cursor is at S[|S| - 1].
 	constexpr Bool hanging() const noexcept { return this->pointer_ + 1 == this->segment_->end(); }
 
-	// The cursor is over its segment.
-	constexpr Bool climbing() const noexcept { return !this->holding() && !this->hanging(); }
+	// The cursor is at S[i > 0 & i < |S|];
+	constexpr Bool climbing() const noexcept { return this->pointer_ >= this->segment_->start() && this->pointer_ < this->segment_->end(); }
 
 public:
 	// Writes a bit to where the cursor is pointed at.
@@ -141,7 +143,12 @@ private:
 	Void drop(BufferSegment& segment) noexcept;
 
 	// Moves the cursor to a prior segment that is not empty.
-	Void fall() noexcept;
+	// Returns falls if the cursor did not fall.
+	Bool fall() noexcept;
+
+	// Moves the cursor to the next segment that is not empty.
+	// Returns falls if the cursor did not jump.
+	Bool jump() noexcept;
 };
 
 class Buffer {
@@ -170,3 +177,4 @@ private:
 
 }
 
+#endif

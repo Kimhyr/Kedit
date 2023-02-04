@@ -1,6 +1,8 @@
 #pragma once
+#ifndef KEDIT_FILE_HPP
+#define KEDIT_FILE_HPP
 
-#include "Types.hpp"
+#include "./Types/Spacial.hpp"
 #include "Error.hpp"
 #include "C.hpp"
 
@@ -56,3 +58,5 @@ private:
 };
 
 }
+
+#endif

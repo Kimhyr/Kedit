@@ -35,8 +35,13 @@ dirs:
 	@mkdir -p $(dir $(OBJS))
 	@mkdir -p $(BLDDIR)
 
-.PHONY:clean
-clean:
+.PHONY:r
+r:c
+	@$(MAKE)
+	./kedit.exe
+
+.PHONY:c
+c:
 	@echo "Deleting $(BIN) symlink..."
 	@$(RM) $(BINNAME)
 	@echo "Deleting directories..."

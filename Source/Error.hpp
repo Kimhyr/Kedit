@@ -1,7 +1,7 @@
 // For now, a basic error system.
 //
 // ============================================================================
-// Errors are thrown enums. For example,
+// Errors are thrown enumerants. For example,
 // 	if (sharted)
 // 		throw ErrorCode::SHARTED;
 // 
@@ -12,10 +12,15 @@
 //	* a developmental error handler built for debugging.
 
 #pragma once
+#ifndef KEDIT_ERROR_HPP
+#define KEDIT_ERROR_HPP
+
+#include "Types/Primitive.hpp"
+#include "C.hpp"
 
 namespace Kedit {
 
-enum class ErrorCode {
+enum class ErrorCode: Nat8 {
 	SUCCESS,
 
 	FOPEN,
@@ -27,7 +32,13 @@ enum class ErrorCode {
 
 	OVERFLOW,
 	UNDERFLOW,
-	OOR,
+	OUT_OF_RANGE,
 };
 
+#define ECP(ENUM) case ErrorCode::ENUM: std::cout << #ENUM "\n"; break
+
+Void printErrorCode(ErrorCode error);
+
 }
+
+#endif

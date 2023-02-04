@@ -2,6 +2,8 @@
 
 #include "File.hpp"
 
+#include "Global.hpp"
+
 namespace Kedit {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -28,7 +30,7 @@ Void Buffer::print() {
 			continue;
 		segment->print();
 	}
-	putchar('\n');
+	std::cout << '\n';
 }
 
 Void Buffer::loadFile(const Sym* path) {
@@ -59,21 +61,33 @@ Void Buffer::loadFile(const Sym* path) {
 Void BufferCursor::write(Bit bit) noexcept {
 	// not doing `this->hanging() && this->segment_->full()`
 	// because it makes a bug.
-	if (this->hanging()) {
-		if (this->segment_->full()) {
-			std::cout << "write full\n";
-			if (!this->segment_->next()->empty())
-				new BufferSegment(*this->segment_);
-			this->climb(*this->segment_->next());
+	if (this->segment_->full()) {
+		std::cout << "full\n";
+		if (!this->segment_->next()) {
+		std::cout << "!next\n";
+		CreateSegment:
+			new BufferSegment(*this->segment_);
+		} else if (!this->segment_->next()->empty()) {
+		std::cout << "!empty\n";
+			goto CreateSegment;
 		}
+		this->climb(*this->segment_->next());
 	} else if (this->resting()) {
-		if (this->segment_->prior() == nil)
-			this->segment_->prepend(*new BufferSegment);
-		else if (!this->segment_->prior()->empty())
-			new BufferSegment(*this->segment_->prior());
-		this->drop(*this->segment_->prior());
-	} else if (this->climbing())
-		this->segment_->split((Bit*)this->pointer_);
+		std::cout << "resting\n";
+		if (!this->segment_->empty()) {
+			std::cout << "!empty\n";
+			if (!this->segment->prior()) {
+				std::cout << "!prior\n";
+				this->segment_->prepend(*new BufferSegment);
+			} else if (!this->segment_->prior()->empty()) {
+				std::cout << "!prior.empty\n";
+				new BufferSegment(*this->segment_->prior());	
+			}
+			this->drop(*this->segment_->prior());
+		}
+
+	}
+Write:
 	this->segment_->write(bit);
 	++this->pointer_;
 	if (bit == '\n') {
@@ -85,14 +99,25 @@ Void BufferCursor::write(Bit bit) noexcept {
 
 Void BufferCursor::erase() {
 	Bool nl = this->current() == '\n';
-	if (this->resting()) {
+YouTubeRewind:
+	if (this->hanging())
+		throw ErrorCode::OUT_OF_RANGE;
+	if (this->segment_->empty()) {
+		std::cout << "empty\n";
+		if (!this->fall()) {
+			if (!this->jump())
+				throw ErrorCode::OUT_OF_RANGE;
+		}
+		goto YouTubeRewind;
+	} else if (this->resting()) {
+		std::cout << "resting\n";
 		this->segment_->shift();
-		this->fall();
 	} else if (!this->hanging()) {
+		std::cout << "!hanging\n";
 		this->segment_->split((Bit*)this->pointer_);
-		--this->pointer_;
 	}
 	this->segment_->erase();
+Epilogue:
 	if (nl) {
 		--this->position_.row;
 		this->position_.column = this->segment_->mass() - 1;
@@ -103,6 +128,7 @@ Void BufferCursor::erase() {
 Void BufferCursor::climb(BufferSegment& segment) noexcept {
 	this->segment_ = &segment;
 	this->pointer_ = this->segment_->start();
+	// this->pointer_ -= segment.empty();
 }
 
 Void BufferCursor::drop(BufferSegment& segment) noexcept {
@@ -110,24 +136,44 @@ Void BufferCursor::drop(BufferSegment& segment) noexcept {
 	this->pointer_ = this->segment_->end() - 1;
 }
 
-
-Void BufferCursor::fall() noexcept {
-	for (BufferSegment* curr = this->segment_->prior(); curr != nil;
-	     curr = curr->prior()) {
+Bool BufferCursor::jump() noexcept {
+	std::cout << "jumping\n";
+	// TODO: Figure something out to not save the orginal location (`orig`).
+	BufferSegment* orig = this->segment_;
+	BufferSegment* curr = this->segment_->next();
+	for (; curr; curr = curr->next()) {
 		if (curr->empty())
 			continue;
-		this->segment_ = curr;
-		this->pointer_ = this->segment_->end() - 1;
+		this->climb(*curr);
+		this->segment_->print();
+		std::cout << '\n';
+		break;
 	}
+	return orig != this->segment_;
+}
+
+Bool BufferCursor::fall() noexcept {
+	std::cout << "falling\n";
+	// TODO: Figure something out to not save the orginal location (`orig`).
+	BufferSegment* orig = this->segment_;
+	BufferSegment* curr = this->segment_->prior();
+	for (; curr; curr = curr->prior()) {
+		if (curr->empty())
+			continue;
+		this->drop(*curr);
+		this->segment_->print();
+		std::cout << '\n';
+		break;
+	}
+	return orig != this->segment_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // BuffeSegment
 
 BufferSegment::BufferSegment(BufferSegment& prior) noexcept
-	: edited_(false), end_(this->data_), next_(nil) {
+	: edited_(false), end_(this->data_), next_(prior.next_) {
 	prior.next_ = this;
-	prior.prior_ = this->prior_;
 	this->prior_ = &prior;
 }
 
@@ -152,11 +198,13 @@ Void BufferSegment::erase() {
 }
 
 Void BufferSegment::shift() {
+	std::cout << "shifting\n";
 	for (Bit* it = this->data_ + 1; it != this->end_; ++it)
 		it[-1] = *it;
 }
 
 Void BufferSegment::split(Bit* from) {
+	std::cout << "splitting\n";
 	new BufferSegment(*this);
 	this->next_->fill(*this, from);
 }
@@ -165,6 +213,8 @@ Void BufferSegment::fill(BufferSegment& from, Bit* it) noexcept {
 	const Bit* end = from.end_;
 	for (; it != end; ++it, ++this->end_, --from.end_)
 		*this->end_ = *it;
+	if (it == from.end_)
+		std::cout << "Hello";
 }
 
 Void BufferSegment::prepend(BufferSegment& prior) {
@@ -175,7 +225,7 @@ Void BufferSegment::prepend(BufferSegment& prior) {
 
 Void BufferSegment::print() {
 	for (const Bit* it = this->data_; it != this->end_; ++it)
-		printf("%c", *it);
+		std::cout << *it;
 }
 
 }

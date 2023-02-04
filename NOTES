@@ -1,25 +1,16 @@
-# Definitions
+#
 
-Bit			- The most basic unit of text (a symbol).
-Byte		- A collection of bits to form a symbol (for UTF encoding).
+## Theorems
 
-Write 		- Insert a symbol into a segment.
-Erase 		- Delete a symbol in a segment by inserting NUL.
+### The cursor only points to a gap, except when the buffer is empty.
 
-Shift		- Move the segment's content once to the left without moving anything
-			  into the prior segment.
-Split		- Create a new segment forwards, and move all data from the given index
-			  to the new segment.
-
-Climb		- Move to the given segment.
-		  	  If a segment is not given, move to the next segment.
-Jump		- Move to next segment with mass.
-Drop		- Move to the prior segment with mass.
-
-Hanging		- At the end of a segment.
-Sleeping	- At the start of a segment.
+Every operation the cursor does, the cursor moves to the closest bit based on
+its context. For example, after erasing at the start of an empty segment, the
+cursor tries to fall, then jump if falling fails.
 
 ## Writing
+
+If the segment is empty, throw an `OUT_OF_RANGE` error.
 
 If the cursor is hanging, and the current segment is full: if the next segment
 is not empty, create a new segment after the current segment. Climb to the next
@@ -33,12 +24,10 @@ If the cursor is climbing, split the segment.
 
 ## Erasing
 
-If the cursor is hanging, (even if the segment is full) nothing should be done.
-
-If the cursor is holding, and there exist a prior node, shift the segment, and
-fall; if there does not exist a prior node, throw an error.
-
-If the cursor is climbing, split the segment. 
+If the cursor is resting, and the segment is not empty, shift the segment.
+Afterwards, if the segment is empty, move the cursor to the closest segment
+with mass; if the cursor is at the root segment, try climbing. If the segment
+is empty, throw an error. If anything else, leave the cursor be.
 
 ## Keybindings
 
@@ -50,12 +39,12 @@ If the cursor is climbing, split the segment.
 	- normal mode.
 * Keymaps:
 	- BitMovement:
-		* J - Move down
-		* K - Move up
-		* L - Move right
-		* ; - Move left
+		* `J` Move down
+		* `K` Move up
+		* `L` Move right
+		* `;` Move left
 	- ByteMovement (move per token/line):
-		* CTRL + [BitMovement]
+		* `CTRL + BitMovement`
 	- SelectMovement ():
 		* SHIFT + [BitMovement|BlockMovement]
 
