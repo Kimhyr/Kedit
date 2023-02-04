@@ -58,37 +58,28 @@ Void Buffer::loadFile(const Sym* path) {
 // BufferCursor
 
 Void BufferCursor::write(Bit bit) {
-	// | a b ~ 0 |
-	//   ^
-	// | ~ 0 0 0 | a b ~ 0 |
-	//             ^
-	// | ~ 0 0 0 | a b ~ 0 |
-	// ^
-	// | c ~ 0 0 | a b ~ 0 |
-	//   ^
-	if (this->resting()) {
+	if (this->holding()) {
+		if (!this->segment_->empty())
+			goto Drop;
+		if (!this->fall()) {
+			if (!this->jump())
+				goto Write;
+			else goto Resting;
+		} else goto Hanging;
+	} else if (this->resting()) {
+	Resting:
 		std::cout << "resting\n";
-		// if (this->hanging())
-  		// 	goto Write;
-		// std::cout << "!hanging\n";
+		if (this->hanging())
+  		 	goto Write;
+		std::cout << "!hanging\n";
+	Drop:
 		if (!this->segment_->prior())
 			this->segment_->prepend(*new BufferSegment);
 		else if (!this->segment_->prior()->empty())
 			new BufferSegment(*this->segment_->prior());
 		this->drop(*this->segment_->prior());
-	}
-	// | a b ~ 0 |
-	//     ^
-	// | a b c ~ |
-	//       ^
-	// ===========
-	// | a b c d |
-	//         ^
-	// | a b c d | ~ 0 0 0 |
-	//           ^
-	// | a b c d | e ~ 0 0 |
-	//             ^
-	else if (this->hanging()) {
+	} else if (this->hanging()) {
+	Hanging:
 		std::cout << "hanging\n";
 		if (!this->segment_->full())
 			goto Write;
@@ -98,14 +89,7 @@ Void BufferCursor::write(Bit bit) {
 		else if (!this->segment_->next()->empty())
 			goto CreateSegment;
 		this->climb(*this->segment_->next());
-	}
-	// | a b c ~ |
-	//     ^
-	// | a ~ 0 0 | b c ~ 0 |
-	//     ^
-	// | a d ~ 0 | b c ~ 0 |
-	//     ^
-	else if (this->climbing()) {
+	} else if (this->climbing()) {
 		std::cout << "climbing\n";
 		this->segment_->split((Bit*)this->pointer_);
 		--this->pointer_;
@@ -128,20 +112,18 @@ Write:
 
 Void BufferCursor::erase() {
 	Bool nl = this->current() == '\n';
-	// | a b c ~ | a ~ 0 0 |
-	//             ^
-	// Shift.
-	// 	| b c ~ 0 | ~ 0 0 0 |
-	// 	          ^
-	// Move backwards.
-	// 	| b c ~ 0 | ~ 0 0 0 |
-	// 	    ^
-	// Or move forwards.
-	// 	| ~ 0 0 0 | ~ 0 0 0 | b c ~ 0 |
-	// 	                      ^
-	// Or stay.
-	// 	| ~ 0 0 0 | ~ 0 0 0 | ~ 0 0 0 |
-	//                ^
+	if (this->holding()) {
+		std::cout << "holding\n";
+		if (this->fall())
+			goto Erase;
+		else if (!this->segment_->empty()) {
+			++pointer_;
+			goto Erase;
+		} else if (this->jump()) {
+			this->segment_->shift();
+			goto Finalize;
+		} else throw ErrorCode::OUT_OF_RANGE;
+	}
 	if (this->resting()) {
 		std::cout << this->current() << " resting\n";
 		this->segment_->shift();
@@ -152,34 +134,20 @@ Void BufferCursor::erase() {
 					--this->pointer_;
 			}
 			std::cout << "fell to " << this->current() << '\n';
+		} else if (this->segment_->mass() == 1) {
+			std::cout << "mass == 1\n";
+			goto DecPtr;
 		}
 		goto Finalize;
-	}
-
-	// | a b c d |
-	//         ^
-	// Erase.
-	// 	| a b c ~ |
-	// 	      ^ 
-	else if (this->hanging()) {
+	} else if (this->hanging())
 		std::cout << "hanging\n";
-	}
-	
-	// | a b c ~ |
-	//     ^
-	// Split from i + 1.
-	// 	| a b ~ 0 | c ~ 0 0 |
-	// 	    ^
-	// Erase.
-	// 	| a ~ 0 0 | c ~ 0 0 |
-	// 	  ^
 	else if (!this->hanging()) {
 		std::cout << "!hanging\n";
 		this->segment_->split((Bit*)this->pointer_ + 1);
-	} else {
-		throw ErrorCode::UNKNOWN_DECISION;
-	}
+	} else throw ErrorCode::UNKNOWN_DECISION;
+Erase:
 	this->segment_->erase();
+DecPtr:
 	--this->pointer_;
 Finalize:
 	if (nl) {
