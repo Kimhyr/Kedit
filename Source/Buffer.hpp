@@ -124,7 +124,7 @@ public:
 
 public:
 	// Writes a bit to where the cursor is pointed at.
-	Void write(Bit bit = ' ') noexcept;
+	Void write(Bit bit = ' ');
 
 	// Erases the bit that cursor is on.
 	Void erase();

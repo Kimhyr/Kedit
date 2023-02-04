@@ -1,7 +1,6 @@
 #include "Buffer.hpp"
 
 #include "File.hpp"
-
 #include "Global.hpp"
 
 namespace Kedit {
@@ -58,39 +57,63 @@ Void Buffer::loadFile(const Sym* path) {
 ///////////////////////////////////////////////////////////////////////////////
 // BufferCursor
 
-Void BufferCursor::write(Bit bit) noexcept {
-	// TODO: Handle writting in an empty buffer.
+Void BufferCursor::write(Bit bit) {
+	// | a b ~ 0 |
+	//   ^
+	// | ~ 0 0 0 | a b ~ 0 |
+	//             ^
+	// | ~ 0 0 0 | a b ~ 0 |
+	// ^
+	// | c ~ 0 0 | a b ~ 0 |
+	//   ^
 	if (this->resting()) {
 		std::cout << "resting\n";
-		if (this->hanging() || this->segment_->empty())
-			goto Write;
-		if (!this->segment_->prior()) {
-			std::cout << "!prior\n";
+		// if (this->hanging())
+  		// 	goto Write;
+		// std::cout << "!hanging\n";
+		if (!this->segment_->prior())
 			this->segment_->prepend(*new BufferSegment);
-		} else if (this->segment_->prior()->mass()) {
-			std::cout << "prior.mass\n";
+		else if (!this->segment_->prior()->empty())
 			new BufferSegment(*this->segment_->prior());
-		}
-		this->climb(*this->segment_->prior());
-	} else if (this->hanging()) {
+		this->drop(*this->segment_->prior());
+	}
+	// | a b ~ 0 |
+	//     ^
+	// | a b c ~ |
+	//       ^
+	// ===========
+	// | a b c d |
+	//         ^
+	// | a b c d | ~ 0 0 0 |
+	//           ^
+	// | a b c d | e ~ 0 0 |
+	//             ^
+	else if (this->hanging()) {
 		std::cout << "hanging\n";
 		if (!this->segment_->full())
 			goto Write;
 		if (!this->segment_->next())
-		CreateNext:
+		CreateSegment:
 			new BufferSegment(*this->segment_);
-		else if (this->segment_->next()->mass())
-			goto CreateNext;
+		else if (!this->segment_->next()->empty())
+			goto CreateSegment;
 		this->climb(*this->segment_->next());
-	} else if (this->climbing()) {
+	}
+	// | a b c ~ |
+	//     ^
+	// | a ~ 0 0 | b c ~ 0 |
+	//     ^
+	// | a d ~ 0 | b c ~ 0 |
+	//     ^
+	else if (this->climbing()) {
 		std::cout << "climbing\n";
 		this->segment_->split((Bit*)this->pointer_);
+		--this->pointer_;
+		std::cout << *this->pointer_ << '\n';
 	} else {
-		std::cout << this->index() << '\n';
-		this->segment_->print();
-		std::cout << '\n';
-		this->segment_->split((Bit*)this->pointer_);
-		// throw ErrorCode::UNKNOWN_DECISION;
+		if (this->holding())
+			std::cout << "holding\n";
+		throw ErrorCode::UNKNOWN_DECISION;
 	}
 Write:
 	this->segment_->write(bit);
@@ -100,33 +123,71 @@ Write:
 		this->position_.column = 0;
 	} else ++this->position_.column;
 	this->column_ = this->position_.column;
+	std::cout << this->current() << ' '<< this->segment_->mass() << '\n';
 }
 
 Void BufferCursor::erase() {
 	Bool nl = this->current() == '\n';
-YouTubeRewind:
-	if (this->segment_->empty()) {
-		std::cout << "empty\n";
-		if (!this->fall()) {
-			if (!this->jump())
-				throw ErrorCode::OUT_OF_RANGE;
-		}
-		goto YouTubeRewind;
-	} else if (this->resting()) {
-		std::cout << "resting\n";
+	// | a b c ~ | a ~ 0 0 |
+	//             ^
+	// Shift.
+	// 	| b c ~ 0 | ~ 0 0 0 |
+	// 	          ^
+	// Move backwards.
+	// 	| b c ~ 0 | ~ 0 0 0 |
+	// 	    ^
+	// Or move forwards.
+	// 	| ~ 0 0 0 | ~ 0 0 0 | b c ~ 0 |
+	// 	                      ^
+	// Or stay.
+	// 	| ~ 0 0 0 | ~ 0 0 0 | ~ 0 0 0 |
+	//                ^
+	if (this->resting()) {
+		std::cout << this->current() << " resting\n";
 		this->segment_->shift();
-	} else if (this->hanging()) {
+		if (this->segment_->empty()) {
+			std::cout << "empty\n";
+			if (!this->fall()) {
+				if (!this->jump())
+					--this->pointer_;
+			}
+			std::cout << "fell to " << this->current() << '\n';
+		}
+		goto Finalize;
+	}
+
+	// | a b c d |
+	//         ^
+	// Erase.
+	// 	| a b c ~ |
+	// 	      ^ 
+	else if (this->hanging()) {
 		std::cout << "hanging\n";
-	} else if (this->climbing()) {
-		std::cout << "climbing\n";
-		this->segment_->split((Bit*)this->pointer_);
+	}
+	
+	// | a b c ~ |
+	//     ^
+	// Split from i + 1.
+	// 	| a b ~ 0 | c ~ 0 0 |
+	// 	    ^
+	// Erase.
+	// 	| a ~ 0 0 | c ~ 0 0 |
+	// 	  ^
+	else if (!this->hanging()) {
+		std::cout << "!hanging\n";
+		this->segment_->split((Bit*)this->pointer_ + 1);
+	} else {
+		throw ErrorCode::UNKNOWN_DECISION;
 	}
 	this->segment_->erase();
+	--this->pointer_;
+Finalize:
 	if (nl) {
 		--this->position_.row;
-		this->position_.column = this->segment_->mass() - 1;
+		// this->position_.column = this->getColumn();
 	} else ++this->position_.column;
 	this->column_ = this->position_.column;
+	std::cout << this->current() << ' '<< this->segment_->mass() << '\n';
 }
 
 Void BufferCursor::climb(BufferSegment& segment) noexcept {
@@ -149,8 +210,6 @@ Bool BufferCursor::jump() noexcept {
 		if (curr->empty())
 			continue;
 		this->climb(*curr);
-		this->segment_->print();
-		std::cout << '\n';
 		break;
 	}
 	return orig != this->segment_;
@@ -165,8 +224,6 @@ Bool BufferCursor::fall() noexcept {
 		if (curr->empty())
 			continue;
 		this->drop(*curr);
-		this->segment_->print();
-		std::cout << '\n';
 		break;
 	}
 	return orig != this->segment_;
@@ -206,6 +263,7 @@ Void BufferSegment::shift() {
 	std::cout << "shifting\n";
 	for (Bit* it = this->data_ + 1; it != this->end_; ++it)
 		it[-1] = *it;
+	--this->end_;
 }
 
 Void BufferSegment::split(Bit* from) {
