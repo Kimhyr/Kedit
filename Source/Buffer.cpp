@@ -45,9 +45,9 @@ Void Buffer::loadFile(const Sym* path) {
 					++this->rows_;
 				try {
 					segment->write(datum);
-				} catch (ErrorCode) { break; }
+				} catch (Error) { break; }
 			}
-		} catch (ErrorCode) {
+		} catch (Error) {
 			break;
 		}
 	}
@@ -68,10 +68,8 @@ Void BufferCursor::write(Bit bit) {
 		} else goto Hanging;
 	} else if (this->resting()) {
 	Resting:
-		std::cout << "resting\n";
 		if (this->hanging())
   		 	goto Write;
-		std::cout << "!hanging\n";
 	Drop:
 		if (!this->segment_->prior())
 			this->segment_->prepend(*new BufferSegment);
@@ -80,7 +78,6 @@ Void BufferCursor::write(Bit bit) {
 		this->drop(*this->segment_->prior());
 	} else if (this->hanging()) {
 	Hanging:
-		std::cout << "hanging\n";
 		if (!this->segment_->full())
 			goto Write;
 		if (!this->segment_->next())
@@ -90,15 +87,9 @@ Void BufferCursor::write(Bit bit) {
 			goto CreateSegment;
 		this->climb(*this->segment_->next());
 	} else if (this->climbing()) {
-		std::cout << "climbing\n";
 		this->segment_->split((Bit*)this->pointer_);
 		--this->pointer_;
-		std::cout << *this->pointer_ << '\n';
-	} else {
-		if (this->holding())
-			std::cout << "holding\n";
-		throw ErrorCode::UNKNOWN_DECISION;
-	}
+	} else 	throw Error(Error::UNKNOWN_DECISION);
 Write:
 	this->segment_->write(bit);
 	++this->pointer_;
@@ -107,13 +98,11 @@ Write:
 		this->position_.column = 0;
 	} else ++this->position_.column;
 	this->column_ = this->position_.column;
-	std::cout << this->current() << ' '<< this->segment_->mass() << '\n';
 }
 
 Void BufferCursor::erase() {
 	Bool nl = this->current() == '\n';
 	if (this->holding()) {
-		std::cout << "holding\n";
 		if (this->fall())
 			goto Erase;
 		else if (!this->segment_->empty()) {
@@ -122,29 +111,21 @@ Void BufferCursor::erase() {
 		} else if (this->jump()) {
 			this->segment_->shift();
 			goto Finalize;
-		} else throw ErrorCode::OUT_OF_RANGE;
+		} else throw Error(Error::OUT_OF_RANGE);
 	}
 	if (this->resting()) {
-		std::cout << this->current() << " resting\n";
 		this->segment_->shift();
 		if (this->segment_->empty()) {
-			std::cout << "empty\n";
 			if (!this->fall()) {
 				if (!this->jump())
 					--this->pointer_;
 			}
-			std::cout << "fell to " << this->current() << '\n';
-		} else if (this->segment_->mass() == 1) {
-			std::cout << "mass == 1\n";
+		} else if (this->segment_->mass() == 1)
 			goto DecPtr;
-		}
 		goto Finalize;
-	} else if (this->hanging())
-		std::cout << "hanging\n";
-	else if (!this->hanging()) {
-		std::cout << "!hanging\n";
+	} else if (!this->hanging())
 		this->segment_->split((Bit*)this->pointer_ + 1);
-	} else throw ErrorCode::UNKNOWN_DECISION;
+	else throw Error(Error::UNKNOWN_DECISION);
 Erase:
 	this->segment_->erase();
 DecPtr:
@@ -155,7 +136,6 @@ Finalize:
 		// this->position_.column = this->getColumn();
 	} else ++this->position_.column;
 	this->column_ = this->position_.column;
-	std::cout << this->current() << ' '<< this->segment_->mass() << '\n';
 }
 
 Void BufferCursor::climb(BufferSegment& segment) noexcept {
@@ -170,7 +150,6 @@ Void BufferCursor::drop(BufferSegment& segment) noexcept {
 }
 
 Bool BufferCursor::jump() noexcept {
-	std::cout << "jumping\n";
 	// TODO: Figure something out to not save the orginal location (`orig`).
 	BufferSegment* orig = this->segment_;
 	BufferSegment* curr = this->segment_->next();
@@ -184,7 +163,6 @@ Bool BufferCursor::jump() noexcept {
 }
 
 Bool BufferCursor::fall() noexcept {
-	std::cout << "falling\n";
 	// TODO: Figure something out to not save the orginal location (`orig`).
 	BufferSegment* orig = this->segment_;
 	BufferSegment* curr = this->segment_->prior();
@@ -216,14 +194,14 @@ BufferSegment::~BufferSegment() noexcept {
 
 Void BufferSegment::write(Bit bit) {
 	if (this->full())
-		throw ErrorCode::OVERFLOW;
+		throw Error(Error::OVERFLOW);
 	*this->end_ = bit;
 	++this->end_;
 }
 
 Void BufferSegment::erase() {
 	if (this->empty())
-		throw ErrorCode::UNDERFLOW;
+		throw Error(Error::UNDERFLOW);
 	--this->end_;
 }
 

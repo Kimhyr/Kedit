@@ -20,25 +20,32 @@
 
 namespace Kedit {
 
-enum class ErrorCode: Nat8 {
-	SUCCESS,
-	UNKNOWN_DECISION,
+class Error {
+public:
+	enum Code: Nat8 {
+		SUCCESS,
+		UNKNOWN_DECISION,
 
-	FOPEN,
-	FCLOSE,
-	FPUTS,
-	FSEEK,
-	FTELL,
-	FGETC,
+		FOPEN,
+		FCLOSE,
+		FPUTS,
+		FSEEK,
+		FTELL,
+		FGETC,
 
-	OVERFLOW,
-	UNDERFLOW,
-	OUT_OF_RANGE,
+		OVERFLOW,
+		UNDERFLOW,
+		OUT_OF_RANGE,
+	};
+
+public:
+	Error(Code code);
+
+	~Error() = default;
+
+private:
+	Code code_;
 };
-
-#define ECP(ENUM) case ErrorCode::ENUM: std::cout << #ENUM "\n"; break
-
-Void printErrorCode(ErrorCode error);
 
 }
 

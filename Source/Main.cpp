@@ -39,8 +39,7 @@ Void test1() {
 Int32 main() {
 	try {
 		test0();
-	} catch (ErrorCode code) {
-		printErrorCode(code);
+	} catch (Error) {
 		return 1;
 	}
 	return 0;

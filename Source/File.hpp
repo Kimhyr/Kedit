@@ -13,7 +13,7 @@ public:
 	inline File(const Sym* path, const Sym* modes) {
 		this->file_ = fopen(path, modes);
 		if (!this->file_)
-			throw ErrorCode::FOPEN;
+			throw Error(Error::FOPEN);
 	}
 
 	inline ~File() noexcept {}
@@ -21,18 +21,18 @@ public:
 public:
 	inline Void write(const Sym* text) {
 		if (fputs(text, this->file_) == EOF)
-			throw ErrorCode::FPUTS;
+			throw Error(Error::FPUTS);
 	}
 
 public:
 	inline Size size() const {
 		if (fseek(this->file_, 0L, SEEK_END) != 0)
-			throw ErrorCode::FSEEK;
+			throw Error(Error::FSEEK);
 		Int size = ftell(this->file_);
 		if (size == -1L)
-			throw ErrorCode::FTELL;
+			throw Error(Error::FTELL);
 		if (fseek(this->file_, 0L, SEEK_SET) != 0)
-			throw ErrorCode::FSEEK;
+			throw Error(Error::FSEEK);
 		return size;
 	}
 
@@ -44,13 +44,13 @@ public:
 	inline Byte get() {
 		Int res = fgetc(this->file_);
 		if (res == EOF)
-			throw ErrorCode::FGETC;
+			throw Error(Error::FGETC);
 		return res;
 	}
 	
 	inline Void close() {
 		if (fclose(this->file_) == EOF)
-			throw ErrorCode::FCLOSE;
+			throw Error(Error::FCLOSE);
 	}
 
 private:

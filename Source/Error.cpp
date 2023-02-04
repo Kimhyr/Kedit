@@ -1,9 +1,12 @@
 #include "Error.hpp"
 
+#define ECP(ENUM) case Error::ENUM: std::cout << #ENUM "\n"; break
+
 namespace Kedit {
 
-Void printErrorCode(ErrorCode error) {
-	switch (error) {
+Error::Error(Code code)
+	: code_(code) {
+	switch (code) {
 	ECP(SUCCESS);
 	ECP(UNKNOWN_DECISION);
 	ECP(FOPEN);
@@ -17,6 +20,7 @@ Void printErrorCode(ErrorCode error) {
 	ECP(OUT_OF_RANGE);
 	default: std::cout << "Cuh, what?\n";
 	}
+	
 }
 
 }
