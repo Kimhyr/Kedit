@@ -5,6 +5,7 @@ namespace Kedit {
 Void printErrorCode(ErrorCode error) {
 	switch (error) {
 	ECP(SUCCESS);
+	ECP(UNKNOWN_DECISION);
 	ECP(FOPEN);
 	ECP(FCLOSE);
 	ECP(FPUTS);

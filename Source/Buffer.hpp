@@ -26,8 +26,8 @@ public:
 
 public:
 	inline BufferSegment() noexcept
-		: prior_(0), edited_(false), end_(this->data_),
-		  next_(0) {}
+		: prior_(nil), edited_(false), end_(this->data_),
+		  next_(nil) {}
 	// Constructs the segment to have a prior segment. Useful for prepending a
 	// segment with a non-nil prior segment.
 	BufferSegment(BufferSegment& prior) noexcept;

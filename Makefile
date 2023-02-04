@@ -36,8 +36,7 @@ dirs:
 	@mkdir -p $(BLDDIR)
 
 .PHONY:r
-r:c
-	@$(MAKE)
+r:default
 	./kedit.exe
 
 .PHONY:c

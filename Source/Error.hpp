@@ -22,6 +22,7 @@ namespace Kedit {
 
 enum class ErrorCode: Nat8 {
 	SUCCESS,
+	UNKNOWN_DECISION,
 
 	FOPEN,
 	FCLOSE,
