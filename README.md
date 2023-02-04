@@ -24,6 +24,16 @@ some rules I broke:
 * not using the C++ standard library (I use the C standard library, except
   `iostream`).
 
+## Tasks
+
+* [ ] Movement operations.
+	* [ ] Bit-by-bit,
+	* [ ] token-by-token, and
+	* [ ] block-by-block.
+* [ ] Input system.
+* [ ] UI system.
+* [ ] Configuration system.
+
 ## Why I hate inheritance
 
 I don't need to give a reason why. If you don't know why, you probably work for
@@ -49,7 +59,9 @@ some of the names I used.
 ## Data structures and algorithms
 
 As said in the introduction of this repository, the data structure for the
-buffer is (what I call)  
+buffer is (what I call) 
+
+
 
 ## Building
 
