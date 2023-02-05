@@ -26,13 +26,9 @@ some rules I broke:
 
 ## Tasks
 
+* [x] Writing and erasing.
 * [ ] Movement operations.
-	* [ ] Bit-by-bit,
-	* [ ] token-by-token, and
-	* [ ] block-by-block.
 * [ ] Input system.
-* [ ] UI system.
-* [ ] Configuration system.
 
 ## Why I hate inheritance
 
