@@ -86,6 +86,9 @@ private:
 	Length column_;
 
 private:
+	Nat getColumn();
+
+private:
 	Void climb(BufferSegment& segment) noexcept;
 	Void drop(BufferSegment& segment) noexcept;
 	

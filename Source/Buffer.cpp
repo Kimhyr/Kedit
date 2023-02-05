@@ -81,13 +81,12 @@ Write:
 	++this->pointer_;
 	if (bit == '\n') {
 		++this->position_.row;
-		this->position_.column = 0;
+		this->position_.column = 1;
 	} else ++this->position_.column;
 	this->column_ = this->position_.column;
 }
 
 Void BufferCursor::erase() {
-	Bool nl = this->current() == '\n';
 	if (this->holding()) {
 		if (this->fall())
 			goto Erase;
@@ -99,13 +98,27 @@ Void BufferCursor::erase() {
 	else if (this->climbing())
 		this->segment_->split((Bit*)this->pointer_);
 Erase:
+	Bool nl = this->current() == '\n';
 	this->segment_->erase();
 	--this->pointer_;
 	if (nl) {
 		--this->position_.row;
-		// this->position_.column = this->getColumn();
-	} else ++this->position_.column;
+		this->position_.column = this->getColumn();
+	} else --this->position_.column;
 	this->column_ = this->position_.column;
+}
+
+Nat BufferCursor::getColumn() {
+	Nat i = 0;
+	for (BufferSegment* segment = this->segment_; segment;
+	     segment = segment->prior()) {
+		for (const Bit* it = segment->end() - 1; it != segment->start() - 1;
+		     --it, ++i) {
+			if (*it == '\n')
+				break;
+		}
+	}
+	return i + 1;
 }
 
 Void BufferCursor::climb(BufferSegment& segment) noexcept {

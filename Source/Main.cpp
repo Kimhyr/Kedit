@@ -49,18 +49,8 @@ Void test0() {
 }
 
 Void test1() {
-	Buffer buffer("/home/k/Projects/Kedit/Tests/Test1");
-	buffer.print();
-	puts("\n==========================");
-	buffer.cursor().write('Z');
-	buffer.cursor().write('Z');
-	buffer.cursor().erase();
-	buffer.print();
-}
-
-Void test2() {
 	enterRawMode();
-	Buffer buffer("/home/k/Projects/Kedit/Tests/Test1");
+	Buffer buffer("/home/k/Projects/Kedit/Tests/Test3");
 	Bit input;
 	std::cout << "\e[H\e[J";
 	Bool running = true;
@@ -68,29 +58,43 @@ Void test2() {
 		input = 0;
 		if (read(STDIN_FILENO, &input, 1) == -1 && errno != EAGAIN)
 			break;
-		std::cout << "\e[H\e[K";
+		// std::cout << "\e[H\e[K";
 		switch (input) {
 		case 127: buffer.cursor().erase(); break;
 		case 'q': running = false; break;
 		default:
-			if (std::iscntrl(input))
-				input = ' ';
 			buffer.cursor().write(input);
+			break;
 		}
 		buffer.print();
+		if (input == '\n')
+			putchar('r');
 		puts("\r");
 	}
 	disableRawMode();
 }
 
-Void test3() {
+Void test2() {
 	Buffer buffer("/home/k/Projects/Kedit/Tests/Test3");
-	for (Int i = 0; i < 5; ++i)
-		buffer.cursor().erase();
 	buffer.cursor().write();
+	buffer.cursor().write();
+	buffer.cursor().write();
+	buffer.cursor().write('\n');
+	buffer.cursor().write();
+	buffer.cursor().write();
+	buffer.cursor().write('\n');
+	buffer.print();
+	buffer.cursor().erase();
+	buffer.cursor().erase();
+	buffer.cursor().erase();
+	buffer.cursor().erase();
+	buffer.cursor().erase();
+	buffer.cursor().erase();
+	buffer.cursor().erase();
+	buffer.print();
 }
 
 Int32 main() {
-	test0();
+	test2();
 	return 0;
 }
