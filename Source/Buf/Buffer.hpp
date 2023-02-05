@@ -7,7 +7,12 @@
 
 namespace Kedit {
 
+class Buffer;
+
 class BufferSegment {
+	friend class Buffer;
+	friend class BufferCursor;
+
 public:
 	static constexpr const Size CAPACITY = 4;
 
@@ -56,9 +61,13 @@ private:
 };
 
 class BufferCursor {
+	friend class Buffer;
+	friend class BufferSegment;
+	
 public:
-	inline BufferCursor(BufferSegment& segment)
-		: segment_(&segment), pointer_(segment.start() - 1), position_(1, 1) {}
+	inline BufferCursor(Buffer& buffer, BufferSegment& segment)
+		: buffer_(buffer), segment_(&segment), pointer_(segment.start() - 1),
+		  position_(1, 1) {}
 
 	~BufferCursor() = default;
 
@@ -80,6 +89,7 @@ public:
 	Void erase();
 
 private:
+	Buffer& buffer_;
 	BufferSegment* segment_;
 	const Bit* pointer_;
 	Position position_;
@@ -97,6 +107,9 @@ private:
 };
 
 class Buffer {
+	friend class BufferCursor;
+	friend class BufferSegment;
+
 public:
 	Buffer(const Sym* filePath);
 
@@ -105,7 +118,7 @@ public:
 public:
 	inline BufferSegment* root() noexcept { return this->root_; }
 	inline BufferCursor& cursor() noexcept { return this->cursor_; }
-	inline Length rows() const noexcept { return this->rows_; }
+	inline Length height() const noexcept { return this->height_; }
 
 public:
 	Void print();
@@ -113,7 +126,8 @@ public:
 private:
 	BufferSegment* root_;
 	BufferCursor cursor_;
-	Length rows_;
+	Length height_;
+
 
 private:
 	Void loadFile(const Sym *path);

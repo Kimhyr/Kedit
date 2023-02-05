@@ -4,11 +4,8 @@
 
 namespace Kedit {
 
-///////////////////////////////////////////////////////////////////////////////
-// Buffer
-
 Buffer::Buffer(const Sym* filePath)
-	: root_(new BufferSegment), cursor_(*this->root_), rows_(1) {
+	: root_(new BufferSegment), cursor_(*this, *this->root_), rows_(1) {
 	this->loadFile(filePath);
 }
 
@@ -53,9 +50,6 @@ Void Buffer::loadFile(const Sym* path) {
 	file.close();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// BufferCursor
-
 Void BufferCursor::write(Bit bit) {
 	if (this->holding()) {
 		if (this->segment_->empty())
@@ -82,6 +76,7 @@ Write:
 	if (bit == '\n') {
 		++this->position_.row;
 		this->position_.column = 1;
+		++this->buffer_.height_;
 	} else ++this->position_.column;
 	this->column_ = this->position_.column;
 }
@@ -96,7 +91,7 @@ Void BufferCursor::erase() {
 	else if (this->hanging())
 		goto Erase;
 	else if (this->climbing())
-		this->segment_->split((Bit*)this->pointer_);
+		this->segment_->split(this->pointer_);
 Erase:
 	Bool nl = this->current() == '\n';
 	this->segment_->erase();
@@ -133,7 +128,6 @@ Void BufferCursor::drop(BufferSegment& segment) noexcept {
 }
 
 Bool BufferCursor::jump() noexcept {
-	// TODO: Figure something out to not save the orginal location (`orig`).
 	BufferSegment* orig = this->segment_;
 	BufferSegment* curr = this->segment_->next();
 	for (; curr; curr = curr->next()) {
@@ -146,7 +140,6 @@ Bool BufferCursor::jump() noexcept {
 }
 
 Bool BufferCursor::fall() noexcept {
-	// TODO: Figure something out to not save the orginal location (`orig`).
 	BufferSegment* orig = this->segment_;
 	BufferSegment* curr = this->segment_->prior();
 	for (; curr; curr = curr->prior()) {
@@ -157,9 +150,6 @@ Bool BufferCursor::fall() noexcept {
 	}
 	return orig != this->segment_;
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// BuffeSegment
 
 BufferSegment::BufferSegment(BufferSegment& prior) noexcept
 	: prior_(&prior), edited_(false), end_(this->data_), next_(prior.next_) {
