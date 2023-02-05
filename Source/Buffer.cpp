@@ -1,7 +1,7 @@
 #include "Buffer.hpp"
 
-#include "File.hpp"
-#include "Global.hpp"
+#include "Utilities/File.hpp"
+#include "Utilities/Global.hpp"
 
 namespace Kedit {
 

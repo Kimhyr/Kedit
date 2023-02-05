@@ -2,7 +2,7 @@
 #ifndef KEDIT_GLOBAL_HPP
 #define KEDIT_GLOBAL_HPP
 
-#include "Types/Primitive.hpp"
+#include "../Types/Primitive.hpp"
 
 namespace Kedit {
 

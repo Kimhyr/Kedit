@@ -1,6 +1,3 @@
-// Simple types for specifying locations, sizes, and other spacial related
-// measurements, though all measurements are spacial related.
-
 #pragma once
 #ifndef KEDIT_SPACIAL_HPP
 #define KEDIT_SPACIAL_HPP

@@ -2,8 +2,8 @@
 #ifndef KEDIT_FILE_HPP
 #define KEDIT_FILE_HPP
 
-#include "./Types/Spacial.hpp"
-#include "Error.hpp"
+#include "../Types/Spacial.hpp"
+#include "../Error.hpp"
 #include "C.hpp"
 
 namespace Kedit {

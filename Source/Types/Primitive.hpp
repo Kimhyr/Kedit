@@ -1,5 +1,3 @@
-// Redefinitions of primitive types.
-
 #pragma once
 #ifndef KEDIT_PRIMITIVE_HPP
 #define KEDIT_PRIMITIVE_HPP

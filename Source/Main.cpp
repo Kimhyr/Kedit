@@ -1,6 +1,6 @@
 #include "Buffer.hpp"
+
 #include "Error.hpp"
-#include "C.hpp"
 
 using namespace Kedit;
 

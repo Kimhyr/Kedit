@@ -1,21 +1,9 @@
-// An implementation of a "gapped doubly linked list of segments from some
-// text". This data structure is split into 3 classes.
-// 	* `BufferSegment` *segment*: A container for a part of a string. A
-//	  segment may be empty, or partially empty (hence "gapped"), and only
-//	  grows forwards, and dies backwards.
-//	* `BufferCursor` *cursor*: A pointer to a bit inside of a segment. The
-// 	  cursor can only point to a bit, never a gap. The cursor is used for
-//	  traversing and modifying the buffer.
-//	* `Buffer` *buffer*: A person that operates with segments and a cursor.
-//
-// ============================================================================
-
 #pragma once
 #ifndef KEDIT_BUFFER_HPP
 #define KEDIT_BUFFER_HPP
 
+#include "Utilities/C.hpp"
 #include "Types/Spacial.hpp"
-#include "C.hpp"
 
 namespace Kedit {
 
