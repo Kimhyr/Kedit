@@ -1,7 +1,7 @@
 # Kedit
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
-array, a rope, piece table, or a gapped array, Kedit uses a (what I call)
+array, rope, piece table, or a gapped array, Kedit uses a (what I call)
 "gapped segmented doubly linked list" for it's buffer. BTW, I thought of the
 buffer myself (I'm trying to flex). Please see the file `~/BIBLIOGRAPHY.md` for
 scholarly work that I have used.
