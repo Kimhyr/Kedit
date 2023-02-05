@@ -1,7 +1,6 @@
 #include "Buffer.hpp"
 
 #include "Utilities/File.hpp"
-#include "Utilities/Global.hpp"
 
 namespace Kedit {
 
@@ -59,25 +58,14 @@ Void Buffer::loadFile(const Sym* path) {
 
 Void BufferCursor::write(Bit bit) {
 	if (this->holding()) {
-		if (!this->segment_->empty())
-			goto Drop;
-		if (!this->fall()) {
-			if (!this->jump())
-				goto Write;
-			else goto Resting;
-		} else goto Hanging;
-	} else if (this->resting()) {
-	Resting:
-		if (this->hanging())
-  		 	goto Write;
-	Drop:
+		if (this->segment_->empty())
+			goto Write;
 		if (!this->segment_->prior())
 			this->segment_->prepend(*new BufferSegment);
 		else if (!this->segment_->prior()->empty())
 			new BufferSegment(*this->segment_->prior());
 		this->drop(*this->segment_->prior());
 	} else if (this->hanging()) {
-	Hanging:
 		if (!this->segment_->full())
 			goto Write;
 		if (!this->segment_->next())
@@ -86,10 +74,8 @@ Void BufferCursor::write(Bit bit) {
 		else if (!this->segment_->next()->empty())
 			goto CreateSegment;
 		this->climb(*this->segment_->next());
-	} else if (this->climbing()) {
+	} else if (this->climbing())
 		this->segment_->split((Bit*)this->pointer_);
-		--this->pointer_;
-	} else 	throw Error(Error::UNKNOWN_DECISION);
 Write:
 	this->segment_->write(bit);
 	++this->pointer_;
@@ -105,32 +91,16 @@ Void BufferCursor::erase() {
 	if (this->holding()) {
 		if (this->fall())
 			goto Erase;
-		else if (!this->segment_->empty()) {
-			++pointer_;
-			goto Erase;
-		} else if (this->jump()) {
-			this->segment_->shift();
-			goto Finalize;
-		} else throw Error(Error::OUT_OF_RANGE);
-	}
-	if (this->resting()) {
+		throw Error(Error::OUT_OF_RANGE);
+	} else if (this->resting())
 		this->segment_->shift();
-		if (this->segment_->empty()) {
-			if (!this->fall()) {
-				if (!this->jump())
-					--this->pointer_;
-			}
-		} else if (this->segment_->mass() == 1)
-			goto DecPtr;
-		goto Finalize;
-	} else if (!this->hanging())
-		this->segment_->split((Bit*)this->pointer_ + 1);
-	else throw Error(Error::UNKNOWN_DECISION);
+	else if (this->hanging())
+		goto Erase;
+	else if (this->climbing())
+		this->segment_->split((Bit*)this->pointer_);
 Erase:
 	this->segment_->erase();
-DecPtr:
 	--this->pointer_;
-Finalize:
 	if (nl) {
 		--this->position_.row;
 		// this->position_.column = this->getColumn();
@@ -206,14 +176,11 @@ Void BufferSegment::erase() {
 }
 
 Void BufferSegment::shift() {
-	std::cout << "shifting\n";
 	for (Bit* it = this->data_ + 1; it != this->end_; ++it)
 		it[-1] = *it;
-	--this->end_;
 }
 
 Void BufferSegment::split(Bit* from) {
-	std::cout << "splitting\n";
 	new BufferSegment(*this);
 	this->next_->fill(*this, from);
 }

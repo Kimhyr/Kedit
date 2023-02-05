@@ -58,7 +58,7 @@ private:
 class BufferCursor {
 public:
 	inline BufferCursor(BufferSegment& segment)
-		: segment_(&segment), pointer_(segment.start()), position_(1, 1) {}
+		: segment_(&segment), pointer_(segment.start() - 1), position_(1, 1) {}
 
 	~BufferCursor() = default;
 

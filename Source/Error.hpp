@@ -37,6 +37,9 @@ private:
 	Code code_;
 };
 
+class ErrorHandler {
+};
+
 }
 
 #endif
