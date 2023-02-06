@@ -1,3 +1,5 @@
+Please do not look at the commit history. It's embarassing. :)
+
 # Kedit
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
