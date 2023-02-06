@@ -12,7 +12,7 @@ SRCEXT=cpp
 HDREXT=h
 
 # Files
-BIN=kedit
+BIN=kedit.exe
 SRCS=$(shell find $(SRCDIR) -name '*.$(SRCEXT)' | sort -k 1nr | cut -f2-)
 OBJS=$(SRCS:$(SRCDIR)/%.$(SRCEXT)=$(BLDDIR)/%.obj)
 DEPS=$(OBJS:.obj=.d)
