@@ -4,15 +4,15 @@
 CC=clang++
 
 # Directories
-SRCDIR=./Source
-BLDDIR=./Build
+SRCDIR=./source
+BLDDIR=./build
 
 # Extensions
 SRCEXT=cpp
-HDREXT=hpp
+HDREXT=h
 
 # Files
-BIN=kedit.exe
+BIN=kedit
 SRCS=$(shell find $(SRCDIR) -name '*.$(SRCEXT)' | sort -k 1nr | cut -f2-)
 OBJS=$(SRCS:$(SRCDIR)/%.$(SRCEXT)=$(BLDDIR)/%.obj)
 DEPS=$(OBJS:.obj=.d)
@@ -37,7 +37,7 @@ dirs:
 
 .PHONY:r
 r:default
-	./kedit.exe
+	./$(BIN)
 
 .PHONY:c
 c:
