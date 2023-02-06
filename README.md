@@ -19,8 +19,8 @@ some rules I broke:
 * ~~Using C casts to omit the const type qualifier~~;
 * using the `new` keyword;
 * using 8-width tabs (tabs > spaces, fight me);
-* not making blank lines inside procedures to code;
-* using the `hpp` file extension rather than `h` in discordant to the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rl-file-suffix);
+* not making blank lines inside procedures to seperate code;
+* ~~using the `hpp` file extension rather than `h` in discordant to the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rl-file-suffix)~~;
 * not using inheritance ([I hate inheritance](#why-i-hate-inheritance));
 * using raw pointers; and
 * not using the C++ standard library (I use the C standard library, except

@@ -34,12 +34,12 @@ public:
 	constexpr Bool empty() const noexcept { return this->_end == this->_begin; }
 	constexpr Bool full() const noexcept { return this->mass() == this->capacity(); }
 	
-	constexpr const Bit_T& at(Nat index) const noexcept {
+	constexpr Bit_T& at(Nat index) noexcept {
 		if (index >= this->mass())
 			throw false;
 		return this->_begin[index];
 	}
-	constexpr const Bit_T& operator[](Int index) noexcept { return this->_begin[index]; }
+	constexpr Bit_T& operator[](Int index) noexcept { return this->_begin[index]; }
 
 public:
 	Bool operator==(const Bucket& other) const noexcept {

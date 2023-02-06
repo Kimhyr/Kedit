@@ -1,5 +1,7 @@
 #include "TextBuffer.h"
 
+#include "../Utilities.h"
+
 namespace Kedit {
 
 TextBuffer::TextBuffer(const View<Bit>* view, Flag flags) noexcept
@@ -7,17 +9,31 @@ TextBuffer::TextBuffer(const View<Bit>* view, Flag flags) noexcept
 	const Bit* it = view->begin();
 	for (Segment* curr = this->_root;; curr = new Segment(*curr)) {
 		for (;; ++it) {
-			if (curr->full())
-				break;
 			if (it >= view->end())
 				goto Escape;
-			curr->write(*it);
+			try { curr->write(*it); }
+			catch (Error) { break; }
 			if (*it == '\n')
 				++this->_height;
 		}
 	}
-Escape:
-	return;
+Escape: return;
+}
+
+TextBuffer::TextBuffer(const Sym* filePath, Flag flags) noexcept
+	: _flags(flags), _cursor(*this->_root) {
+	File file(filePath, "r");
+	Byte byte = file.get();
+	for (Segment* curr = this->_root;; curr = new Segment(*curr)) {
+		try {
+			for (;; byte = file.get()) {
+				try { curr->write(byte); }
+				catch (Error) { break; }
+				if (byte == '\n')
+					++this->_height;
+			}
+		} catch (Error) { break; }
+	}
 }
 
 TextBuffer::~TextBuffer() {
@@ -36,7 +52,7 @@ Void TextBuffer::print() noexcept {
 			continue;
 		segment->print();
 	}
-	std::cout << '\n';
+	Output::write('\n');
 }
 
 Void TextBuffer::Cursor::write(Bit bit) {
@@ -61,6 +77,12 @@ Void TextBuffer::Cursor::write(Bit bit) {
 		this->_segment->split(this->_pointer);
 Write:
 	this->_segment->write(bit);
+	++this->_pointer;
+	if (bit == '\n') {
+		--this->_position.row;
+		this->_position.column = this->getColumn();
+	} else --this->_position.column;
+	this->_column = this->_position.column;
 }
 
 Void TextBuffer::Cursor::erase() {
@@ -166,10 +188,14 @@ Void TextBuffer::Segment::fill(Segment& from, Bit* iter) noexcept {
 		this->write(*iter);
 }
 
+Void TextBuffer::Segment::shift() noexcept {
+	for (Nat i = 1; i < this->mass(); ++i)
+		this->_data[i - 1] = this->_data[i];
+}
 
 Void TextBuffer::Segment::print() noexcept {
 	for (auto bit : *this)
-		std::cout << bit;
+		Output::write(bit);
 }
 
 }

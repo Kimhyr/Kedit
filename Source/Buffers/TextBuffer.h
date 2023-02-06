@@ -4,9 +4,6 @@
 
 #include "../Bucket.h"
 #include "../View.h"
-#include "../Utilities.h"
-
-#include <iostream>
 
 namespace Kedit {
 
@@ -25,8 +22,8 @@ public:
 		friend class Segment;
 	
 	public:
-		using MassType = Int8;
-		static const MassType CAPACITY = 4;
+		using MassType = Nat8;
+		static const MassType CAPACITY = 4; // TODO: Change this once done debugging.
 	
 	public:
 		constexpr Segment() noexcept = default;
@@ -49,13 +46,15 @@ public:
 		constexpr Bool full() const noexcept { return this->_data.full(); }
 		constexpr Bool empty() const noexcept { return this->_data.empty(); }
 
+		constexpr Bit& operator[](Int index) noexcept { return this->_data[index]; }
+
 // TODO: Iterators.
 
 	public:
-		constexpr Void write(Bit bit) noexcept { this->_data.put(bit); }
-		constexpr Void erase(Nat count = 1) noexcept { this->_data.pop(count); }
+		constexpr Void write(Bit bit) { this->_data.put(bit); }
+		constexpr Void erase(Nat count = 1) { this->_data.pop(count); }
 		
-		constexpr Void shift() noexcept { shiftLeft(this->_data.begin(), this->_data.end() + this->mass(), 1); }
+		Void shift() noexcept;
 
 		Void print() noexcept;
 	
@@ -120,6 +119,7 @@ public:
 
 public:
 	TextBuffer(const View<Bit>* view, Flag flags = Flag::CLEAR) noexcept;
+	TextBuffer(const Sym* filePath, Flag flags = Flag::CLEAR) noexcept;
 
 	~TextBuffer();
 
@@ -132,9 +132,6 @@ private:
 	Segment* _head = _root;
 	Nat _height = 0;
 	Cursor _cursor;
-
-private:
-	Void loadFile(const Sym* path);
 };
 
 }

@@ -57,7 +57,11 @@ using Ref = Type_T&;
 	using Real = Real32;
 #endif
 
-using Error = Int;
+struct Error {
+	Error(Int code)
+		: code(code) {}
+	Int code = 0;
+};
 
 enum class Ordering: Int8 {
 	LESSER = -1,
