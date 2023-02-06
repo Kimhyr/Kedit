@@ -57,8 +57,6 @@ using Ref = Type_T&;
 	using Real = Real32;
 #endif
 
-using Index = Int;
-using Size = Nat;
 using Error = Int;
 
 enum class Ordering: Int8 {

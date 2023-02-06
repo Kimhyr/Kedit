@@ -1,15 +1,13 @@
-build/Main.obj: source/Main.cpp source/Buffers/TextBuffer.h \
-  source/Buffers/../Bucket.h source/Utilities.h source/Types.h \
-  source/Buffers/../Pointer.h source/Buffers/../View.h
+Build/Main.obj: Source/Main.cpp Source/Buffers/TextBuffer.h \
+  Source/Buffers/../Bucket.h Source/Types.h Source/Buffers/../View.h \
+  Source/Buffers/../Utilities.h
 
-source/Buffers/TextBuffer.h:
+Source/Buffers/TextBuffer.h:
 
-source/Buffers/../Bucket.h:
+Source/Buffers/../Bucket.h:
 
-source/Utilities.h:
+Source/Types.h:
 
-source/Types.h:
+Source/Buffers/../View.h:
 
-source/Buffers/../Pointer.h:
-
-source/Buffers/../View.h:
+Source/Buffers/../Utilities.h:

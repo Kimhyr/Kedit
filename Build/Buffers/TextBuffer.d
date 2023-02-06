@@ -1,16 +1,14 @@
-build/Buffers/TextBuffer.obj: source/Buffers/TextBuffer.cpp \
-  source/Buffers/TextBuffer.h source/Buffers/../Bucket.h \
-  source/Buffers/../Utilities.h source/Buffers/../Types.h \
-  source/Buffers/../Pointer.h source/Buffers/../View.h
+Build/Buffers/TextBuffer.obj: Source/Buffers/TextBuffer.cpp \
+  Source/Buffers/TextBuffer.h Source/Buffers/../Bucket.h \
+  Source/Buffers/../Types.h Source/Buffers/../View.h \
+  Source/Buffers/../Utilities.h
 
-source/Buffers/TextBuffer.h:
+Source/Buffers/TextBuffer.h:
 
-source/Buffers/../Bucket.h:
+Source/Buffers/../Bucket.h:
 
-source/Buffers/../Utilities.h:
+Source/Buffers/../Types.h:
 
-source/Buffers/../Types.h:
+Source/Buffers/../View.h:
 
-source/Buffers/../Pointer.h:
-
-source/Buffers/../View.h:
+Source/Buffers/../Utilities.h:

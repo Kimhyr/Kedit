@@ -3,8 +3,9 @@
 using namespace Kedit;
 
 Int32 main() {
-	Sym str[] = "1234567890";
+	Sym str[] = "penis_balls-cock";
 	View<Bit> view(str, &str[sizeof(str)]);
 	TextBuffer buffer(&view);
+	buffer.print();
 	return 0;
 }

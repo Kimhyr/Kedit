@@ -29,8 +29,8 @@ template<class Type_T> [[nodiscard]] constexpr
 typename RemoveRef<Type_T>::Type&& move(Type_T&& value)
 noexcept { return static_cast<typename RemoveRef<Type_T>::Type&&>(value); }
 
-template<class Iterator_T, class Difference_T = Size> constexpr
-Iterator_T shiftLeft(Iterator_T first, Iterator_T last, Size count = 1) {
+template<class Iterator_T, class Difference_T = Nat> constexpr
+Iterator_T shiftLeft(Iterator_T first, Iterator_T last, Nat count = 1) {
 	return std::shift_left(first, last, count); // Lol
 	// if (count == 0)
 	// 	return last;

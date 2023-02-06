@@ -4,8 +4,8 @@
 CC=clang++
 
 # Directories
-SRCDIR=./source
-BLDDIR=./build
+SRCDIR=./Source
+BLDDIR=./Build
 
 # Extensions
 SRCEXT=cpp
