@@ -16,7 +16,7 @@ in-segment appendation. For more specifics on the algorithms, go to the
 Also, I know I broke many modern C++ rules. I do not care. But here are
 some rules I broke:
 
-* Using C casts to omit the const type qualifier;
+* ~~Using C casts to omit the const type qualifier~~;
 * using the `new` keyword;
 * using 8-width tabs (tabs > spaces, fight me);
 * not making blank lines inside procedures to code;
