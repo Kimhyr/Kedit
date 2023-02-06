@@ -12,8 +12,9 @@ public:
 	constexpr Bucket() noexcept = default;
 	
 	Bucket(const Bucket& other) noexcept {
-		for (auto& [i, j] : { *this, *other })
-			i = j;
+		//TODO W?
+		for (Nat i = 0; i < Capacity_T; ++i)
+			this->_begin[i] = other._begin[i];
 		this->_end = this->_begin + other.mass();
 	}
 
@@ -45,7 +46,7 @@ public:
 	Bool operator==(const Bucket& other) const noexcept {
 		if (other.mass() != this->mass())
 			return false;
-		for (auto& [bit1, bit2] : {other, *this}) {
+		for (auto& [bit1, bit2] : {*this, other}) {
 			if (bit1 != bit2)
 				return false; }
 		return true;

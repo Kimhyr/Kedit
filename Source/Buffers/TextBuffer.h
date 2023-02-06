@@ -27,9 +27,9 @@ public:
 	
 	public:
 		constexpr Segment() noexcept = default;
-		Segment(Segment& prior) noexcept;
+		Segment(Segment& prior, Bool edited) noexcept;
 
-		Void prepend(Segment& prior);
+		Void prepend(Segment& prior, Bool edited);
 	
 		~Segment() noexcept;
 	
@@ -46,7 +46,7 @@ public:
 		constexpr Bool full() const noexcept { return this->_data.full(); }
 		constexpr Bool empty() const noexcept { return this->_data.empty(); }
 
-		constexpr Bit& operator[](Int index) noexcept { return this->_data[index]; }
+		const Bit& operator[](Int index) noexcept { return this->_data[index]; }
 
 // TODO: Iterators.
 
@@ -119,7 +119,7 @@ public:
 
 public:
 	TextBuffer(const View<Bit>* view, Flag flags = Flag::CLEAR) noexcept;
-	TextBuffer(const Sym* filePath, Flag flags = Flag::CLEAR) noexcept;
+	TextBuffer(const Sym* filePath, Flag flags = Flag::CLEAR);
 
 	~TextBuffer();
 

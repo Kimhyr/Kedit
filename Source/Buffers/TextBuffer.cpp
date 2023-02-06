@@ -20,9 +20,13 @@ TextBuffer::TextBuffer(const View<Bit>* view, Flag flags) noexcept
 Escape: return;
 }
 
-TextBuffer::TextBuffer(const Sym* filePath, Flag flags) noexcept
+TextBuffer::TextBuffer(const Sym* filePath, Flag flags)
 	: _flags(flags), _cursor(*this->_root) {
-	File file(filePath, "r");
+	File file(filePath, "r+");
+	if (file.empty()) {
+		this->_root->write('\n');
+		this->_root->_edited = true;
+	}
 	Byte byte = file.get();
 	for (Segment* curr = this->_root;; curr = new Segment(*curr)) {
 		try {
@@ -60,16 +64,16 @@ Void TextBuffer::Cursor::write(Bit bit) {
 		if (this->_segment->empty())
 			goto Write;
 		if (!this->_segment->prior())
-			this->_segment->prepend(*new Segment);
+			this->_segment->prepend(*new Segment, true);
 		else if (!this->_segment->prior()->empty())
-			new Segment(*this->_segment->prior());
+			new Segment(*this->_segment->prior(), true);
 		this->drop(*this->_segment->prior());
 	} else if (this->hanging()) {
 		if (!this->_segment->full())
 			goto Write;
 		if (!this->_segment->next())
 		CreateSegment:
-			new Segment(*this->_segment);
+			new Segment(*this->_segment, true);
 		else if (!this->_segment->next()->empty())
 			goto CreateSegment;
 		this->climb(*this->_segment->next());
@@ -155,14 +159,15 @@ Bool TextBuffer::Cursor::fall() noexcept {
 	return orig != this->_segment;
 }
 
-TextBuffer::Segment::Segment(Segment& prior) noexcept
-	: _prior(&prior) {
+TextBuffer::Segment::Segment(Segment& prior, Bool edited) noexcept
+	: _prior(&prior), _edited(edited) {
 	if (prior._next)
 		prior._next->_prior = this;
 	prior._next = this;
 }
 
-Void TextBuffer::Segment::prepend(Segment& prior) {
+Void TextBuffer::Segment::prepend(Segment& prior, Bool edited) {
+	this->_edited = edited;
 	prior._next = this;
 	if (this->_prior)
 		this->_prior->_next = this->_prior;
