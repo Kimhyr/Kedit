@@ -1,21 +1,11 @@
-#include "Buffers/TextBuffer.h"
+// #include "Buffers/TextBuffer.h"
 #include "Utilities.h"
+#include "Types.h"
 
 using namespace Kedit;
 
-Void fromView() {
-	Sym str[] = "Hello, World!";
-	View<Bit> view(str, &str[sizeof(str)]);
-	TextBuffer buffer(&view);
-	buffer.print();
-}
-
-Void fromFile() {
-	TextBuffer buffer("/home/k/Projects/Kedit/Tests/Test3");
-	buffer.print();
-}
-
 Int32 main() {
-	fromFile();
+	Int arr[3];
+	Int arr2[3] = arr;
 	return 0;
 }

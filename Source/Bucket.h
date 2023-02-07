@@ -3,81 +3,90 @@
 #define KEDIT_BUCKET_H
 
 #include "Types.h"
+#include "Utilities.h"
 
 namespace Kedit {
 
-template<class Bit_T, Nat Capacity_T>
+template<class Water_T, Nat Capacity_T>
 class Bucket {
 public:
-	constexpr Bucket() noexcept = default;
-	
-	Bucket(const Bucket& other) noexcept {
-		//TODO W?
-		for (Nat i = 0; i < Capacity_T; ++i)
-			this->_begin[i] = other._begin[i];
-		this->_end = this->_begin + other.mass();
+	Bucket() noexcept = default;
+	Bucket(const Bucket& other) noexcept
+		: _weight(other.weight()) {
+		memcpy(this->_water, other.water(), other.weight());
 	}
+	Bucket(Bucket&&) = delete;
 
-	Bucket(Bucket* other) noexcept
-		: _begin(other->_begin), _end(this->_begin + other->mass()){
-		other->_begin = nil;
-		other->_end = nil;
+	Bucket& operator=(const Bucket& other) noexcept {
+		this->_weight = other.weight();
+		memcpy(this->_water, other.water(), other.weight());
+		return *this;
 	}
+	Bucket& operator=(Bucket&&) = delete;
+
+	~Bucket() = default;
 
 public:
-	[[nodiscard]] constexpr const Bit_T* begin() const noexcept { return this->_begin; }
-	[[nodiscard]] constexpr const Bit_T* end() const noexcept { return this->_end; }
-	[[nodiscard]] constexpr Bit_T* begin() noexcept { return this->_begin; }
-	[[nodiscard]] constexpr Bit_T* end() noexcept { return this->_end; }
+	constexpr const Water_T* water() const noexcept { return this->_water; }
+	constexpr Nat weight() const noexcept { return this->_weight; }
+	constexpr Nat capacity() const noexcept { return Capacity_T; }
+	constexpr Bool empty() const noexcept { return this->weight() == 0; }
+	constexpr Bool full() const noexcept { return this->weight() >= Capacity_T; }
 	
-	constexpr Nat mass() const noexcept { return this->_end - this->_begin; }
-	[[nodiscard]] constexpr Nat capacity() const noexcept { return Capacity_T; }
-	constexpr Bool empty() const noexcept { return this->_end == this->_begin; }
-	constexpr Bool full() const noexcept { return this->mass() == this->capacity(); }
-	
-	constexpr Bit_T& at(Nat index) noexcept {
+	constexpr const Water_T* begin() const noexcept { return this->water(); }
+	constexpr const Water_T* end() const noexcept { return this->water() + this->weight(); }
+
+	constexpr Water_T& operator[](Int index) noexcept { return this->_water[index]; }
+	constexpr Water_T& at(Nat index) noexcept {
 		if (index >= this->mass())
-			throw false;
-		return this->_begin[index];
+			throw out_of_range("");
+		return this->water()[index];
 	}
-	constexpr Bit_T& operator[](Int index) noexcept { return this->_begin[index]; }
+
+	constexpr const Water_T& operator[](Int index) const noexcept { return this->_water[index]; }
+	constexpr const Water_T& at(Nat index) const noexcept {
+		if (index >= this->mass())
+			throw out_of_range("");
+		return this->water()[index];
+	}
 
 public:
 	Bool operator==(const Bucket& other) const noexcept {
-		if (other.mass() != this->mass())
+		if (other.weight() != this->weight())
 			return false;
-		for (auto& [bit1, bit2] : {*this, other}) {
-			if (bit1 != bit2)
-				return false; }
+		for (auto& [i, j] : {this->_water, other._water}) {
+			if (i != j)
+				return false;
+		}
 		return true;
 	}
 
-	Void put(const Bit_T& bit) {
+	Void put(const Water_T& bit) noexcept {
 		if (this->full())
 			throw Error(0);
 		*this->_end = bit;
 		++this->_end;
 	}
 
-	Void pop() {
+	Void pop() noexcept {
 		if (this->empty())
-			throw Error(0);
+			return;
 		--this->_end;
-		this->_end->~Bit_T();
+		this->_end->~Water_T();
 	}
 
-	Void pop(Nat count = 1) {
+	Void pop(Nat count = 1) noexcept {
 		if (this->empty())
-			throw Error(0);
+			return;
 		do {
 			--this->_end;
-			this->_end->~Bit_T();
-		} while (!this->empty() && --count);
+			this->_end->~Water_T();
+		} while (--count && !this->empty());
 	}
 
 private:
-	Bit_T _begin[Capacity_T];
-	Bit_T* _end = _begin;
+	Water_T _water[Capacity_T];
+	Nat _weight = 0;
 };
 
 }

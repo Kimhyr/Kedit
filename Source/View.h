@@ -3,6 +3,7 @@
 #define KEDIT_VIEW_H
 
 #include "Types.h"
+#include "Utilities.h"
 
 namespace Kedit {
 
@@ -11,19 +12,21 @@ class View {
 public:
 	View() = delete;
 	
-	explicit constexpr View(const Bit_T* begin, const Bit_T* end) noexcept
+	explicit View(const Bit_T* begin, const Bit_T* end) noexcept
 		: _begin(begin), _end(end) {}
 
-	constexpr View(const View& other) = delete;
+	View(const View& other) = delete;
 
-	constexpr View(View* other) noexcept
-		: _begin(other->_begin), _end(other->_end) {
+	View(View&& other) noexcept
+		: _begin(other._begin), _end(other._end) {
 		other->_end = other->_begin = nil;
 	}
 
-	constexpr View& operator=(const View& other) = delete;
+	View& operator=(const View& other) = delete;
 
-	constexpr View& operator=(View* other) noexcept {
+	View& operator=(View&& other) noexcept {
+		if (this == &other)
+			return;
 		this->_begin = other->_begin;
 		this->_end = other->_end;
 		other->_begin = nil;
@@ -31,22 +34,21 @@ public:
 	}
 	
 public:
-	[[nodiscard]] constexpr const Bit_T* begin() const noexcept { return this->_begin; }
-	[[nodiscard]] constexpr const Bit_T* end() const noexcept { return this->_end; }
+	constexpr const Bit_T* begin() const noexcept { return this->_begin; }
+	constexpr const Bit_T* end() const noexcept { return this->_end; }
 	constexpr Length_T length() const noexcept { return this->end() - this->begin(); }
 
-	constexpr Bit& at(Length_T index) const noexcept {
-		if (index >= this->length())
-			throw Error(0);
-		return this->_begin[index];
-	}
-	constexpr Bit& operator[](Int index) noexcept { return this->_begin[index]; }
-
 	constexpr const Bit& operator[](Int index) const noexcept { return this->_begin[index]; }
+	constexpr const Bit& at(Length_T index) const noexcept {
+		if (index >= this->length())
+			throw out_of_range("");
+		return this->begin()[index];
+	}
 
 public:
-	Bool operator==(const View& other)
-	const noexcept;
+	inline Bool operator==(const View& other) const noexcept {
+		return cmpwlen(this->_begin, this->length(), other._begin, other.length());
+	}
 
 private:
 	const Bit_T* _begin;

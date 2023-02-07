@@ -28,34 +28,40 @@ public:
 	public:
 		constexpr Segment() noexcept = default;
 		Segment(Segment& prior, Bool edited) noexcept;
+		Segment(const Segment& other) noexcept;
+		Segment(Segment&&) = delete;
+		
+		Segment& operator=(const Segment& other) noexcept;
+		Segment& operator=(Segment&&) = delete;
 
-		Void prepend(Segment& prior, Bool edited);
-	
 		~Segment() noexcept;
 	
 	public:
-		[[nodiscard]] constexpr Bool edited() const noexcept { return this->_edited; }
+		constexpr Bool edited() const noexcept { return this->_edited; }
+
+		constexpr const Bucket<Bit, CAPACITY>& data() const noexcept { return this->_data; }
+
+		constexpr const Bit* begin() const noexcept { return this->data().begin(); }
+		constexpr const Bit* end() const noexcept { return this->data().end(); }
+
+		constexpr Segment* prior() noexcept { return this->_prior; }
+		constexpr Segment* next() noexcept { return this->_next; }
 		
-		constexpr const Bit* begin() const noexcept { return this->_data.begin(); }
-		constexpr const Bit* end() const noexcept { return this->_data.end(); }
+		constexpr MassType weight() const noexcept { return this->data().weight(); }
+		constexpr Bool full() const noexcept { return this->data().full(); }
+		constexpr Bool empty() const noexcept { return this->data().empty(); }
 
-		[[nodiscard]] constexpr Segment* prior() noexcept { return this->_prior; }
-		[[nodiscard]] constexpr Segment* next() noexcept { return this->_next; }
-		
-		constexpr MassType mass() const noexcept { return this->_data.mass(); }
-		constexpr Bool full() const noexcept { return this->_data.full(); }
-		constexpr Bool empty() const noexcept { return this->_data.empty(); }
-
-		const Bit& operator[](Int index) noexcept { return this->_data[index]; }
-
-// TODO: Iterators.
+		constexpr const Bit& operator[](Int index) const noexcept { return this->data()[index]; }
 
 	public:
 		constexpr Void write(Bit bit) { this->_data.put(bit); }
 		constexpr Void erase(Nat count = 1) { this->_data.pop(count); }
 		
-		Void shift() noexcept;
+		Void shift(Nat count = 1) noexcept { shift_left(this->begin(), this->end(), count); }
 
+		Void split(Nat at) noexcept;
+		Void prepend(Segment& prior, Bool edited);
+	
 		Void print() noexcept;
 	
 	private:
@@ -65,11 +71,10 @@ public:
 		Segment* _next = nil;
 
 	private:
-		constexpr Bit* begin() noexcept { return this->_data.begin(); }
-		constexpr Bit* end() noexcept { return this->_data.end(); }
+		constexpr Bit* begin() noexcept { return (Bit*)this->data().begin(); }
+		constexpr Bit* end() noexcept { return (Bit*)this->data().end(); }
 	
 	private:
-		Void split(Bit* from) noexcept;
 		Void fill(Segment& from, Bit* iter) noexcept;
 	};
 
@@ -84,17 +89,18 @@ public:
 		~Cursor() = default;
 
 	public:
-		[[nodiscard]] constexpr Segment* segment() const noexcept { return this->_segment; }
+		constexpr Segment* segment() const noexcept { return this->_segment; }
 
-		[[nodiscard]] constexpr Position position() const noexcept { return this->_position; }
-		[[nodiscard]] constexpr Nat column() const noexcept { return this->_column; }
+		constexpr Position position() const noexcept { return this->_position; }
+		constexpr Nat column() const noexcept { return this->_column; }
+
+		constexpr const Bit* pointer() const noexcept { return this->_pointer; }
+		constexpr Bit current() const noexcept { return *this->pointer(); }
 		
-		constexpr Bit current() const noexcept { return *this->_pointer; }
-		
-		constexpr Bool holding() const noexcept { return this->_pointer == this->_segment->begin() - 1; }
-		constexpr Bit resting() const noexcept { return this->_pointer == this->_segment->begin(); }
-		constexpr Bit hanging() const noexcept { return this->_pointer + 1 == this->_segment->end(); }
-		constexpr Bit climbing() const noexcept { return this->_pointer >= this->_segment->begin() && this->_pointer < this->_segment->end(); }
+		constexpr Bool holding() const noexcept { return this->pointer() == this->segment()->begin() - 1; }
+		constexpr Bit resting() const noexcept { return this->pointer() == this->segment()->begin(); }
+		constexpr Bit hanging() const noexcept { return this->pointer() + 1 == this->segment()->end(); }
+		constexpr Bit climbing() const noexcept { return this->pointer() >= this->segment()->begin() && this->pointer() < this->segment()->end(); }
 
 	public:
 		Void write(Bit bit = ' ');

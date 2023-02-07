@@ -182,9 +182,9 @@ TextBuffer::Segment::~Segment() noexcept {
 		this->_next->_prior = this->_prior;
 }
 
-Void TextBuffer::Segment::split(Bit* from) noexcept {
+Void TextBuffer::Segment::split(Nat at) noexcept {
 	new Segment(*this);
-	this->_next->fill(*this, from);
+	this->_next->fill(*this, &this->_data[at]);
 }
 
 Void TextBuffer::Segment::fill(Segment& from, Bit* iter) noexcept {
@@ -193,14 +193,9 @@ Void TextBuffer::Segment::fill(Segment& from, Bit* iter) noexcept {
 		this->write(*iter);
 }
 
-Void TextBuffer::Segment::shift() noexcept {
-	for (Nat i = 1; i < this->mass(); ++i)
-		this->_data[i - 1] = this->_data[i];
-}
-
 Void TextBuffer::Segment::print() noexcept {
 	for (auto bit : *this)
-		Output::write(bit);
+		cout << bit;
 }
 
 }
