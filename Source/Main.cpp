@@ -4,8 +4,7 @@
 
 using namespace Kedit;
 
-Int32 main() {
-	Int arr[3];
-	Int arr2[3] = arr;
+int32 main() {
+	unique_ptr<int> unique;
 	return 0;
 }
