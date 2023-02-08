@@ -1,10 +1,11 @@
 // #include "Buffers/TextBuffer.h"
-#include "Utilities.h"
-#include "Types.h"
+#include "Include.h"
+#include "Buffers/TextBuffer.h"
 
 using namespace Kedit;
 
 int32 main() {
-	unique_ptr<int> unique;
+	TextBuffer buf("/home/k/Projects/Kedit/Tests/Test2");
+	buf.print();
 	return 0;
 }

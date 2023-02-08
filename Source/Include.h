@@ -1,7 +1,7 @@
 #pragma once
-#ifndef KEDIT_UTILITIES_H
-#define KEDIT_UTILITIES_H
 
+#include <cmath>
+#include <vector>
 #include <fstream>
 #include <ranges>
 #include <string_view>
@@ -85,5 +85,3 @@ inline bool cmpwlen(const T* first, Length_T firstLen, const T* second, Length_T
 }
 
 }
-
-#endif

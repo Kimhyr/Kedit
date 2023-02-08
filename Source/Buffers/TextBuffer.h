@@ -1,6 +1,4 @@
 #pragma once
-#ifndef KEDIT_TEXTBUFFER_H
-#define KEDIT_TEXTBUFFER_H
 
 #include "../Bucket.h"
 
@@ -29,14 +27,15 @@ public:
 		friend class Segment;
 	
 	public:
-		using MassType = nat8;
-		static const MassType CAPACITY = 4; // TODO: Change this once done debugging.
-		using BucketType = Bucket<byte, CAPACITY>;
+		typedef nat8 WeightType;
+		static const WeightType CAPACITY = 4; // TODO: Change this once done debugging.
+		typedef Bucket<byte, CAPACITY> ContainerType;
 	
 	public:
-		constexpr Segment() noexcept = default;
-		Segment(Segment& prior, bool edited) noexcept;
-		Segment(const Segment& other) noexcept;
+		Segment(bool edited = false)
+			: _prior(nullptr), _edited(edited), _next(nullptr) {}
+		Segment(Segment& prior, bool edited = true) noexcept;
+		Segment(const Segment& other, bool edited = true) noexcept;
 		Segment(Segment&&) = delete;
 		
 		Segment& operator=(const Segment& other) noexcept;
@@ -47,37 +46,37 @@ public:
 	public:
 		constexpr bool edited() const noexcept { return this->_edited; }
 
-		constexpr const BucketType& data() const noexcept { return this->_data; }
+		constexpr const ContainerType& data() const noexcept { return this->_data; }
 
 		constexpr const byte* begin() const noexcept { return this->data().begin(); }
 		constexpr const byte* end() const noexcept { return this->data().end(); }
 
-		constexpr unique_ptr<Segment>& prior() noexcept { return this->_prior; }
-		constexpr unique_ptr<Segment>& next() noexcept { return this->_next; }
+		constexpr Segment* prior() noexcept { return this->_prior; }
+		constexpr Segment* next() noexcept { return this->_next; }
 		
-		constexpr MassType weight() const noexcept { return this->data().weight(); }
+		constexpr WeightType weight() const noexcept { return this->data().weight(); }
 		constexpr bool full() const noexcept { return this->data().full(); }
 		constexpr bool empty() const noexcept { return this->data().empty(); }
 
 		constexpr const byte& operator[](index index) const noexcept { return this->data()[index]; }
-
+		constexpr const byte& at(WeightType index) const noexcept { return this->data().at(index); }
+ 
 	public:
-		constexpr void write(byte byte) { this->_data.put(byte); }
-		constexpr void erase(length count = 1) { this->_data.pop(count); }
+		constexpr void write(byte input) { this->_data.put(input); }
+		constexpr void erase(WeightType count = 1) { this->_data.pop(count); }
 		
-		constexpr void shift(length count = 1) noexcept { shift_left(&this->_data[0], &this->_data[this->weight()], count); }
+		constexpr void shift(WeightType count = 1) noexcept { shift_left(&this->_data[0], &this->_data[this->weight()], count); }
 
-		void split(length at) noexcept;
-		void prepend(Segment& prior, bool edited);
+		void split(WeightType at) noexcept;
+		void prepend(Segment& prior);
 	
-		void print() noexcept;
+		void print() const noexcept;
 	
 	private:
-		unique_ptr<Segment> _prior;
-		bool _edited = false;
+		Segment* _prior;
+		bool _edited;
 		Bucket<byte, CAPACITY> _data;
-		unique_ptr<Segment> _next = nullptr;
-
+		Segment* _next;
 
 	private:
 		void fill(Segment& from, const byte* iter) noexcept;
@@ -86,34 +85,42 @@ public:
 	class Cursor {
 		friend class TextBuffer;
 		friend class Segment;
+
+	public:
 	
 	public:
-		Cursor(Segment& segment) noexcept
-			: _segment(segment), _position(1, 1), _column(1) {}
+		Cursor(TextBuffer& buffer) noexcept
+			: _buffer(buffer), _segment(buffer._root), _position(1, 1), _column(1) {}
 
 		~Cursor() = default;
 
 	public:
-		constexpr const Segment& segment() const noexcept { return this->_segment; }
+		constexpr const TextBuffer& buffer() const noexcept { return this->_buffer; } 
+		constexpr const Segment* segment() const noexcept { return this->_segment; }
 
 		constexpr const Position& position() const noexcept { return this->_position; }
+		constexpr Segment::WeightType index() const noexcept { return this->pointer() - this->segment()->begin(); }
 		constexpr length column() const noexcept { return this->_column; }
 
-		constexpr ptr<const byte> pointer() const noexcept { return this->_pointer; }
+		constexpr const byte* pointer() const noexcept { return this->_pointer; }
 		constexpr byte current() const noexcept { return *this->pointer(); }
 		
-		constexpr bool holding() const noexcept { return this->pointer() == this->segment().begin() - 1; }
-		constexpr bool resting() const noexcept { return this->pointer() == this->segment().begin(); }
-		constexpr bool hanging() const noexcept { return this->pointer() + 1 == this->segment().end(); }
-		constexpr bool climbing() const noexcept { return this->pointer() >= this->segment().begin() && this->pointer() < this->segment().end(); }
+		constexpr bool holding() const noexcept { return this->pointer() == this->segment()->begin() - 1; }
+		constexpr bool resting() const noexcept { return this->pointer() == this->segment()->begin(); }
+		constexpr bool hanging() const noexcept { return this->pointer() + 1 == this->segment()->end(); }
+		constexpr bool climbing() const noexcept { return this->pointer() >= this->segment()->begin() && this->pointer() < this->segment()->end(); }
 
 	public:
+		void write(const Segment::ContainerType::ViewType& view);
 		void write(byte input = ' ');
+
+		void erase(Segment::WeightType count = 1);
 		void erase();
 
 	private:
-		Segment& _segment;
-		byte* _pointer;
+		TextBuffer& _buffer;
+		Segment* _segment;
+		const byte* _pointer;
 		Position _position;
 		length _column;
 
@@ -134,16 +141,22 @@ public:
 	~TextBuffer();
 
 public:
-	void print() noexcept;
+	constexpr Flag flags() const noexcept { return this->_flags; }
+	constexpr const Segment* root() const noexcept { return this->_root; }
+	constexpr const Segment* head() const noexcept { return this->_head; }
+	constexpr length height() const noexcept { return this->_height; }
+	constexpr Cursor& cursor() noexcept { return this->_cursor; }
+
+public:
+	void print() const noexcept;
+	void forEach(void (*proc)(const Segment&)) const;
 
 private:
-	Flag _flags = Flag::CLEAR;
-	unique_ptr<Segment> _root = make_unique<Segment>();
-	unique_ptr<Segment> _head = make_unique<Segment>(*_root); // REFERENCE COUNTING TRIGGERS ME. I REFUSE TO USE shared_ptr.
-	length _height = 0;
+	Flag _flags;
+	Segment* _root = new Segment(false);
+        Segment *_head = this->_root;
+        length _height = 0;
 	Cursor _cursor;
 };
 
 }
-
-#endif
