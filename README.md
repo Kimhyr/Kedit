@@ -45,19 +45,16 @@ the buffer.
 
 #### Time time complexity of traversing.
 
-Traversing the buffer has the time complexity of $O(\log{-i + n + 1})$ moving
-forwards, and $O(\log{i + 1})$ moving backwards.
-This is done because of the cursor being able to be at any position in the
-buffer, and because the buffer is circular.
+* Traversing the buffer has the time complexity of $O(\log{-i + n + 1})$ moving
+  forwards,
+* and $O(\log{i + 1})$ moving backwards.
 
 #### The time complexity of inserting.
 
 * The time complexity of inserting a string that will not overflow the cursor's
   segment when the cursor is hanging in it's segment is $O(n)$;
-
 * inserting a string that can overflow the cursor's segment when the cursor is
   hanging in it's segment is $O(A\lceil\frac{n-m+o}{m}\rceil+n)$;
-
 * inserting a string in the middle of the cursor's segment's mass has the time
   complexity of $O(A\lceil\frac{n-m+o}{m}\rceil+o-i-1+n)$.
 
