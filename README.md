@@ -1,9 +1,5 @@
 Please do not look at the commit history. It's embarassing. :)
 
-$\lceil \frac{n - (m - o)}{m} \rceil$
-
-$\log{n - i + 1}$
-
 # Kedit
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
