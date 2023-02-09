@@ -57,34 +57,12 @@ is a heap allocation. Inserting within the cursor's segment's mass is
 * [ ] implement movement operations; and
 * [ ] come up with an input system.
 
-## Why I hate inheritance
-
-I don't need to give a reason why. If you don't know why, you probably work for
-a megacorp., or use some scripting/GC language that abstracts everything
-(e.g. Python, TypeScript, and C#). I am pure; I like imperative, Rust-like
-OOP, and funtional (never logical) programming languages.
-
-I understand that I'm using C++ (an object oriented language), but that doesn't
-mean I have to use some object oriented features.
-
-I like C, but I hate the way I need to name things. For example,
-`buffer_segment_write` or `write_to_buffer_segment` for procedure names (I
-prefer the second name), and `BUFFER_FLAG_WRITABLE` or `WRITABLE_BUFFER_FLAG`
-for enum names (second one also). I hate the naming. And you can't specify the
-type size of an enum. And there are no namespaces so library procedures are
-like `lib_poop_your_pants`. And the fact that there is no standard in naming
-things.
-
-If you read my code, yes, I understand that the way I name things are pretty
-bad. It's even worse knowing that I spend a quite a bit of time figuring out
-some of the names I used.
-
 ## Data structures and algorithms
+
+TODO: This section.
 
 As said in the introduction of this repository, the data structure for the
 buffer is (what I call) 
-
-
 
 ## Building
 
