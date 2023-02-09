@@ -1,5 +1,7 @@
 Please do not look at the commit history. It's embarassing. :)
 
+$\lceil (n - (m - o)) / m \rceil$
+
 # Kedit
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
