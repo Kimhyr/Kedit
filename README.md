@@ -24,27 +24,26 @@ some rules I broke:
 ## What's with the buffer?
 
 The process of inserting a string into a rope is too slow. First, you must
-locate the requested position in the rope within a *O(log(n))* time complexity;
-then, you must split the string, and allocate space for both halfs of the
-string in the heap. Soley due to allocating space on the heap per insertion is
-a no-go for me.
+locate the requested position in the rope within a $O(\log n)$ time complexity,
+where $n$ is the length of the rope; then, you must split the string, and
+allocate space for both halfs of the string in the heap. Soley due to
+allocating space on the heap per insertion is a no-go for me.
 
 The data structure used for the buffer is a circular doubly linked list with
-each node having a preallocated space (perferably 160 bytes+) for data. The
-data structure is also accompanied by a cursor that is used for insertion,
-deletion, and traversing the buffer.
+each node having a preallocated space for data. The data structure is also
+accompanied by a cursor that is used for insertion, deletion, and traversing
+the buffer.
 
-The use of the cursor and the buffer being circular means that traversing will
-never take a time complexity of $O(n)$, where $n$ is the mass of the buffer,
-instead it will take $O(\log{-i + n + 1}$ moving forwards, and $O(\log{i + 1})$
-moving backwards, where $i$ is the index that the cursor is on, and $n$ is the
-mass of the buffer.
+Traversing the buffer has the time complexity of $O(\log{-i + n + 1}$ moving
+forwards, and $O(\log{i + 1})$ moving backwards, where $i$ is the index that
+the cursor is on, and $n$ is the mass of the buffer.
 
-The time complexity of inserting a string when the cursor is hanging in it's
-segment is $O(n)$, where $n$ is the length of the string being inserted.
+The time complexity of inserting a string that will not overflow the cursor's
+segment when the cursor is hanging in it's segment is $O(n)$, where $n$ is the
+length of the string being inserted.
 
 Inserting a string that can overflow the cursor's segment when the cursor is
-hanging in it's segment is $O(A \lceil \frac{-m + n + o}{m} \rceil + n$, where
+hanging in it's segment is $O(A \lceil \frac{-m + n + o}{m} \rceil + n)$, where
 $A$ is an allocation in the heap, $m$ is the capacity of the segment that the
 cursor is on, $n$ is the length of the string, and $o$ is the mass of the
 segment.
