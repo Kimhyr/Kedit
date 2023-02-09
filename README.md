@@ -26,6 +26,10 @@ some rules I broke:
 **WARNING**: The my big O notation is not very good, nor my description of the
 variables.
 
+Since the time complexity of heap allocations are important, the time
+complexity of a heap allocation will be denoted with the constant $A$, and, for
+simplicity, previous heap allocations will not be considered.
+
 The process of inserting a string into a rope is too slow. First, you must
 locate the requested position in the rope within a $O(\log{n})$ time complexity,
 where $n$ is the length of the rope. Then, you must split the string, and
@@ -42,22 +46,20 @@ the buffer.
 #### Time time complexity of traversing.
 
 Traversing the buffer has the time complexity of $O(\log{-i + n + 1})$ moving
-forwards, and $O(\log{i + 1})$ moving backwards, where $i$ is the index that
-the cursor is on, and $n$ is the mass of the buffer. This is done because of
-the cursor being able to be at any position in the buffer, and because the
-buffer is circular.
+forwards, and $O(\log{i + 1})$ moving backwards.
+This is done because of the cursor being able to be at any position in the
+buffer, and because the buffer is circular.
 
 #### The time complexity of inserting.
 
-The time complexity of inserting a string that will not overflow the cursor's
-segment when the cursor is hanging in it's segment is $O(n)$, where $n$ is the
-length of the string being inserted.
+* The time complexity of inserting a string that will not overflow the cursor's
+  segment when the cursor is hanging in it's segment is $O(n)$;
 
-Inserting a string that can overflow the cursor's segment when the cursor is
-hanging in it's segment is $O(c A(\lceil - \frac{m - n - o}{m} \rceil) + n)$,
-where $c$ is the amount of allocations done previously, $A$ is an allocation in
-the heap, $m$ is the capacity of the segment that the cursor is on, $n$ is the
-length of the string, and $o$ is the mass of the segment.
+* inserting a string that can overflow the cursor's segment when the cursor is
+  hanging in it's segment is $O(A\lceil\frac{n-m+o}{m}\rceil+n)$;
+
+* inserting a string in the middle of the cursor's segment's mass has the time
+  complexity of $O(A\lceil\frac{n-m+o}{m}\rceil+o-i-1+n)$.
 
 #### The time complexity of deleting.
 
