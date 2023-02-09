@@ -23,6 +23,9 @@ some rules I broke:
 
 ## What's with the buffer?
 
+**WARNING**: The my big O notation is not very good, nor my description of the
+variables.
+
 The process of inserting a string into a rope is too slow. First, you must
 locate the requested position in the rope within a $O(\log{n})$ time complexity,
 where $n$ is the length of the rope; then, you must split the string, and
@@ -34,19 +37,31 @@ each node having a preallocated space for data. The data structure is also
 accompanied by a cursor that is used for insertion, deletion, and traversing
 the buffer.
 
+### Time complexity
+
+#### Time time complexity of traversing.
+
 Traversing the buffer has the time complexity of $O(\log{-i + n + 1})$ moving
 forwards, and $O(\log{i + 1})$ moving backwards, where $i$ is the index that
-the cursor is on, and $n$ is the mass of the buffer.
+the cursor is on, and $n$ is the mass of the buffer. This is done because of
+the cursor being able to be at any position in the buffer, and because the
+buffer is circular.
+
+#### The time complexity of inserting.
 
 The time complexity of inserting a string that will not overflow the cursor's
 segment when the cursor is hanging in it's segment is $O(n)$, where $n$ is the
 length of the string being inserted.
 
 Inserting a string that can overflow the cursor's segment when the cursor is
-hanging in it's segment is $O(A \lceil - \frac{m - n - o}{m} \rceil + n)$, where
-$A$ is an allocation in the heap, $m$ is the capacity of the segment that the
-cursor is on, $n$ is the length of the string, and $o$ is the mass of the
-segment.
+hanging in it's segment is $O(c * A(\lceil - \frac{m - n - o}{m} \rceil) + n)$,
+where $c$ is the amount of allocations done previously, $A$ is an allocation in
+the heap, $m$ is the capacity of the segment that the cursor is on, $n$ is the
+length of the string, and $o$ is the mass of the segment.
+
+#### The time complexity of deleting.
+
+### Space complexity
 
 ## Tasks
 
