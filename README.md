@@ -36,19 +36,18 @@ deletion, and traversing the buffer.
 
 The use of the cursor and the buffer being circular means that traversing will
 never take a time complexity of $O(n)$, where $n$ is the mass of the buffer,
-instead it will take $O(\log{n - i + 1}$ moving forwards, and $O(\log{i + 1})$
-moving backwards, where $n$ is the mass of the bfufer, and $i$ is the index
-that the cursor is on.
+instead it will take $O(\log{-i + n + 1}$ moving forwards, and $O(\log{i + 1})$
+moving backwards, where $i$ is the index that the cursor is on, and $n$ is the
+mass of the buffer.
 
 The time complexity of inserting a string when the cursor is hanging in it's
 segment is $O(n)$, where $n$ is the length of the string being inserted.
-Inserting a string that can overflow the cursor's segment when the cursor is
-hanging in it's segment is
-$O(m - o + (n - (m - o)) + A * \lceil \frac{n - (m - o)}{m} \rceil )$, where $m$ is the
-capacity of the segment that the cursor is on, $o$ is the mass of the segment
-that the cursor is on, $n$ is the length of the string being inserted, and $A$
-is a heap allocation. Inserting within the cursor's segment's mass is 
 
+Inserting a string that can overflow the cursor's segment when the cursor is
+hanging in it's segment is $O(A \lceil \frac{-m + n + o}{m} \rceil + n$, where
+$A$ is an allocation in the heap, $m$ is the capacity of the segment that the
+cursor is on, $n$ is the length of the string, and $o$ is the mass of the
+segment.
 
 ## Tasks
 
