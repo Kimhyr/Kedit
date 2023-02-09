@@ -34,7 +34,7 @@ each node having a preallocated space for data. The data structure is also
 accompanied by a cursor that is used for insertion, deletion, and traversing
 the buffer.
 
-Traversing the buffer has the time complexity of $O(\log{-i + n + 1}$ moving
+Traversing the buffer has the time complexity of $O(\log{-i + n + 1})$ moving
 forwards, and $O(\log{i + 1})$ moving backwards, where $i$ is the index that
 the cursor is on, and $n$ is the mass of the buffer.
 
@@ -43,7 +43,7 @@ segment when the cursor is hanging in it's segment is $O(n)$, where $n$ is the
 length of the string being inserted.
 
 Inserting a string that can overflow the cursor's segment when the cursor is
-hanging in it's segment is $O(A \lceil \frac{-m + n + o}{m} \rceil + n)$, where
+hanging in it's segment is $O(A \lceil - \frac{m - n - o}{m} \rceil + n)$, where
 $A$ is an allocation in the heap, $m$ is the capacity of the segment that the
 cursor is on, $n$ is the length of the string, and $o$ is the mass of the
 segment.
