@@ -43,22 +43,26 @@ the buffer.
 
 ### Time complexity
 
+TODO: Account for gaps when inserting, deleting, and traversing when it comes.
+
 #### Time time complexity of traversing.
 
 * Traversing the buffer has the time complexity of $O(\log{-i + n + 1})$ moving
-  forwards,
-* and $O(\log{i + 1})$ moving backwards.
+  forwards, and
+* $O(\log{i + 1})$ moving backwards.
 
 #### The time complexity of inserting.
 
 * The time complexity of inserting a string that will not overflow the cursor's
   segment when the cursor is hanging in it's segment is $O(n)$;
 * inserting a string that can overflow the cursor's segment when the cursor is
-  hanging in it's segment is $O(A\lceil\frac{n-m+o}{m}\rceil+n)$;
+  hanging in it's segment is $O(A\lceil\frac{n-m+o}{m}\rceil+n)$; and
 * inserting a string in the middle of the cursor's segment's mass has the time
   complexity of $O(A\lceil\frac{n-m+o}{m}\rceil+o-i-1+n)$.
 
 #### The time complexity of deleting.
+
+* Deleting a string has the time complexity of $O(n)$. 
 
 ### Space complexity
 
