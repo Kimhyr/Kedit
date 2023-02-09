@@ -24,7 +24,7 @@ some rules I broke:
 ## What's with the buffer?
 
 The process of inserting a string into a rope is too slow. First, you must
-locate the requested position in the rope within a $O(\log n)$ time complexity,
+locate the requested position in the rope within a $O(\log{n})$ time complexity,
 where $n$ is the length of the rope; then, you must split the string, and
 allocate space for both halfs of the string in the heap. Soley due to
 allocating space on the heap per insertion is a no-go for me.
