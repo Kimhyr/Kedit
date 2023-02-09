@@ -4,12 +4,17 @@ Please do not look at the commit history. It's embarassing. :)
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
 array, rope, piece table, or a gapped array, Kedit uses a (what I call)
-"gapped segmented doubly linked list" for it's buffer. BTW, I thought of the
-buffer myself (I'm trying to flex). Please see the file `~/BIBLIOGRAPHY.md` for
-scholarly work that I have used.
+"gapped segmented doubly linked list" (I am still brainstorming names) for it's
+buffer. BTW, I thought of the buffer myself (I'm trying to flex). Please see
+the file `~/BIBLIOGRAPHY.md` for scholarly work that I have used for research.
 
-The buffer is inspired by paged file systems, and utilizes the idea of
-preallocated memory per node. This ensures swift string manipulation per
+The buffer is inspired by the rope data structure. The problem with the rope is
+that it requires a heap allocation per insertion of a string. 
+
+TODO: Finish this paragraph.
+
+The buffer is inspired by paged file systems, and the rop data structure, and
+utilizes the idea of preallocated memory per node. This ensures swift string manipulation per
 in-segment appendation. For more specifics on the algorithms, go to the
 "[Data structures and algorithms](#data-structures-and-algorithms)" section.
 
