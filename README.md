@@ -1,6 +1,6 @@
 Please do not look at the commit history. It's embarassing. :)
 
-$\lceil (n - (m - o)) / m \rceil$
+$\lceil \frac{n - (m - o)}{m} \rceil$
 
 # Kedit
 
