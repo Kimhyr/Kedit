@@ -54,7 +54,7 @@ segment when the cursor is hanging in it's segment is $O(n)$, where $n$ is the
 length of the string being inserted.
 
 Inserting a string that can overflow the cursor's segment when the cursor is
-hanging in it's segment is $O(c * A(\lceil - \frac{m - n - o}{m} \rceil) + n)$,
+hanging in it's segment is $O(c A(\lceil - \frac{m - n - o}{m} \rceil) + n)$,
 where $c$ is the amount of allocations done previously, $A$ is an allocation in
 the heap, $m$ is the capacity of the segment that the cursor is on, $n$ is the
 length of the string, and $o$ is the mass of the segment.
