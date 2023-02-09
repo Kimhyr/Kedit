@@ -56,9 +56,9 @@ TODO: Account for gaps when inserting, deleting, and traversing when it comes.
 * The time complexity of inserting a string that will not overflow the cursor's
   segment when the cursor is hanging in it's segment is $O(n)$;
 * inserting a string that can overflow the cursor's segment when the cursor is
-  hanging in it's segment is $O(A\lceil -\frac{n-m+o}{m}\rceil+n)$; and
+  hanging in it's segment is $O(A\lceil\frac{n-m+o}{m}\rceil+n)$; and
 * inserting a string in the middle of the cursor's segment's mass has the time
-  complexity of $O(A\lceil -\frac{n-m+o}{m}\rceil+o-i-1+n)$.
+  complexity of $O(A\lceil\frac{n-m+o}{m}\rceil+o-i-1+n)$.
 
 #### The time complexity of deleting.
 
