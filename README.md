@@ -2,7 +2,7 @@ Please do not look at the commit history. It's embarassing. :)
 
 $\lceil \frac{n - (m - o)}{m} \rceil$
 
-$\log{2}$
+$\log{n - i + 1}$
 
 # Kedit
 
