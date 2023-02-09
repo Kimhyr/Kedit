@@ -8,16 +8,6 @@ array, rope, piece table, or a gapped array, Kedit uses a (what I call)
 buffer. BTW, I thought of the buffer myself (I'm trying to flex). Please see
 the file `~/BIBLIOGRAPHY.md` for scholarly work that I have used for research.
 
-The buffer is inspired by the rope data structure. The problem with the rope is
-that it requires a heap allocation per insertion of a string. 
-
-TODO: Finish this paragraph.
-
-The buffer is inspired by paged file systems, and the rop data structure, and
-utilizes the idea of preallocated memory per node. This ensures swift string manipulation per
-in-segment appendation. For more specifics on the algorithms, go to the
-"[Data structures and algorithms](#data-structures-and-algorithms)" section.
-
 Also, I know I broke many modern C++ rules. I do not care. But here are
 some rules I broke:
 
@@ -30,6 +20,35 @@ some rules I broke:
 * using raw pointers; and
 * not using the C++ standard library (I use the C standard library, except
   `iostream`).
+
+## What's with the buffer?
+
+The process of inserting a string into a rope is too slow. First, you must
+locate the requested position in the rope within a *O(log(n))* time complexity;
+then, you must split the string, and allocate space for both halfs of the
+string in the heap. Soley due to allocating space on the heap per insertion is
+a no-go for me.
+
+The data structure used for the buffer is a circular doubly linked list with
+each node having a preallocated space (perferably 160 bytes+) for data. The
+data structure is also accompanied by a cursor that is used for insertion,
+deletion, and traversing the buffer.
+
+The use of the cursor and the buffer being circular means that traversing will
+never take a time complexity of $O(n)$, where $n$ is the mass of the buffer,
+instead it will take $O(\log{n - i + 1}$ moving forwards, and $O(\log{i + 1})$
+moving backwards, where $n$ is the mass of the bfufer, and $i$ is the index
+that the cursor is on.
+
+The time complexity of inserting a string when the cursor is hanging in it's
+segment is $O(n)$, where $n$ is the length of the string being inserted.
+Inserting a string that can overflow the cursor's segment when the cursor is
+hanging in it's segment is
+$O(m - o + (n - (m - o)) + A * \lceil \frac{n - (m - o)}{m} \rceil )$, where $m$ is the
+capacity of the segment that the cursor is on, $o$ is the mass of the segment
+that the cursor is on, $n$ is the length of the string being inserted, and $A$
+is a heap allocation. Inserting within the cursor's segment's mass is 
+
 
 ## Tasks
 

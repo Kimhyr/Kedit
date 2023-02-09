@@ -5,14 +5,41 @@
 
 using namespace Kedit;
 
+void test0() {
+	TextBuffer buf("/home/k/Projects/Kedit/Tests/Test1");
+	std::string_view str("abcdef");
+	buf.cursor().write(str);
+	buf.cursor().erase(2);
+	buf.cursor().write(str);
+	buf.cursor().erase(10);
+	buf.print();
+	std::cout << std::endl;
+}
+
+void test1() {
+	TextBuffer buf("/home/k/Projects/Kedit/Tests/Test1");
+	bool running = true;
+	std::string input;
+	while (running) {
+		std::cout << "\n>  ";
+		std::cin >> input;
+		if (input == "/") {
+			buf.cursor().erase();
+		} else if (input == "1") {
+			buf.cursor().moveRight();
+		} else if (input == "2") {
+			buf.cursor().moveLeft();
+		}
+		else buf.cursor().write(input);
+		buf.print();
+	}
+}
+
 int32 main() {
 	try {
-		TextBuffer buf("/home/k/Projects/Kedit/Tests/Test2");
-		// std::string_view str("sddsf");
-		buf.cursor().erase();
-		// buf.print();
+		test1();
 	} catch (const std::exception& e) {
-		std::cout << e.what() << std::endl;
+		std::cout << "EXCEPTION: " << e.what() << '\n';
 	}
 	return 0;
 }

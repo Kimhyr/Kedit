@@ -39,7 +39,6 @@ void TextBuffer::print() const noexcept {
 
 void TextBuffer::Cursor::write(const ViewType& view) {
 	for (byte input : view) {
-		std::cout << "Writing " << input << ".\n";
 		if (this->holding()) {
 			if (this->_segment->empty())
 				goto Write;
@@ -67,7 +66,7 @@ void TextBuffer::Cursor::write(const ViewType& view) {
 		if (input == '\n') {
 			--this->_position.row;
 			// TODO: Make a more performant `getColumn` method.
-			this->_position.column = this->getColumn();
+			// this->_position.column = this->getColumn();
 		} else --this->_position.column;
 		this->_column = this->_position.column;
 	}
@@ -76,7 +75,6 @@ void TextBuffer::Cursor::write(const ViewType& view) {
 void TextBuffer::Cursor::erase(natptr count) {
 	for (; count; --count) {
 		if (this->holding()) {
-			std::cout << "FALLING\n";
 			if (this->fall())
 				goto Erase;
 			throw std::out_of_range(__FUNCTION__);
@@ -84,8 +82,9 @@ void TextBuffer::Cursor::erase(natptr count) {
 			this->_segment->shift();
 		else if (this->hanging())
 			goto Erase;
-		else if (this->climbing())
+		else if (this->climbing()) {
 			this->_segment->split(this->index() + 1);
+		}
 	Erase:
 		bool nl = this->current() == '\n';
 		this->_segment->erase();
@@ -96,6 +95,32 @@ void TextBuffer::Cursor::erase(natptr count) {
 			// this->_position.column = this->getColumn();
 		} else --this->_position.column;
 		this->_column = this->_position.column;
+	}
+}
+
+void TextBuffer::Cursor::moveRight(natptr count) {
+	for (; count; --count) {
+		if (this->hanging()) {
+			if (!this->jump())
+				throw std::out_of_range(__FUNCTION__);
+			goto End;
+		}
+		++this->_pointer;
+	End:
+		continue;
+	}
+}
+
+void TextBuffer::Cursor::moveLeft(natptr count) {
+	for (; count; --count) {
+		if (this->holding()) {
+			if (!this->fall())
+				throw std::out_of_range(__FUNCTION__);
+			goto End;
+		}
+		--this->_pointer;
+	End:
+		continue;
 	}
 }
 

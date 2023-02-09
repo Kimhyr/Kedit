@@ -14,7 +14,7 @@ public:
 
 public:
 	Bucket() noexcept
-		: _end(this->_water){}
+		: _end(this->_water) {}
 	Bucket(Bucket&&) = delete;
 	Bucket(const Bucket& other) noexcept
 		: _end(this->begin() + other.end()) {

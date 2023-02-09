@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <assert.h>
 
 #include "../Bucket.h"
 
@@ -92,7 +93,7 @@ public:
 	public:
 		Cursor(TextBuffer& buffer) noexcept
 			: _buffer(buffer), _index(0), _segment(buffer._root),
-			  _pointer(this->_segment->begin()), _position(1, 1), _column(1) {}
+			  _pointer(this->_segment->begin() -1), _position(1, 1), _column(1) {}
 
 		~Cursor() = default;
 
@@ -101,13 +102,14 @@ public:
 		constexpr const Segment* segment() const noexcept { return this->_segment; }
 
 		constexpr const Position& position() const noexcept { return this->_position; }
+		// TODO: Switch to using `natptr _index` rather `const BitType* _pointer`.
 		constexpr WeightType index() const noexcept { return this->pointer() - this->segment()->begin(); }
 		constexpr natptr column() const noexcept { return this->_column; }
 
 		constexpr const BitType* pointer() const noexcept { return this->_pointer; }
 		constexpr BitType current() const noexcept { return *this->pointer(); }
 		
-		constexpr bool holding() const noexcept { return this->pointer() == this->segment()->begin() - 1; }
+		constexpr bool holding() const noexcept { return this->pointer() + 1 == this->segment()->begin(); }
 		constexpr bool resting() const noexcept { return this->pointer() == this->segment()->begin(); }
 		constexpr bool hanging() const noexcept { return this->pointer() + 1 == this->segment()->end(); }
 		constexpr bool climbing() const noexcept { return this->pointer() >= this->segment()->begin() && this->pointer() < this->segment()->end(); }
@@ -116,6 +118,9 @@ public:
 		void write(const ViewType& view);
 
 		void erase(natptr count = 1);
+
+		void moveRight(natptr count = 1);
+		void moveLeft(natptr count = 1);
 
 	private:
 		TextBuffer& _buffer;
