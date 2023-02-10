@@ -91,6 +91,15 @@ public:
 		using ViewType = Segment::BodyType::ViewType;
 	
 	public:
+		struct State {
+			natptr index;
+			Segment& segment;
+			const BitType* pointer;
+			Position position;
+			natptr column;
+		};
+	
+	public:
 		Cursor(TextBuffer& buffer) noexcept
 			: _buffer(buffer), _index(0), _segment(buffer._root),
 			  _pointer(this->_segment->begin() -1), _position(1, 1), _column(1) {}
@@ -121,6 +130,11 @@ public:
 
 		void moveRight(natptr count = 1);
 		void moveLeft(natptr count = 1);
+		void moveUp(natptr count = 1);
+		void moveDown(natptr count = 1);
+		
+		State locateBackwards(byte delimiter);
+		State locateForwards(byte delimiter);
 
 	private:
 		TextBuffer& _buffer;

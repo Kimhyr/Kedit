@@ -37,7 +37,7 @@ void TextBuffer::print() const noexcept {
 		curr->print();
 }
 
-void TextBuffer::Cursor::write(const ViewType& view) {
+void TextBufferCursor::write(const ViewType& view) {
 	for (byte input : view) {
 		if (this->holding()) {
 			if (this->_segment->empty())
@@ -72,7 +72,7 @@ void TextBuffer::Cursor::write(const ViewType& view) {
 	}
 }
 
-void TextBuffer::Cursor::erase(natptr count) {
+void TextBufferCursor::erase(natptr count) {
 	for (; count; --count) {
 		if (this->holding()) {
 			if (this->fall())
@@ -98,7 +98,7 @@ void TextBuffer::Cursor::erase(natptr count) {
 	}
 }
 
-void TextBuffer::Cursor::moveRight(natptr count) {
+void TextBufferCursor::moveRight(natptr count) {
 	for (; count; --count) {
 		if (this->hanging()) {
 			if (!this->jump())
@@ -111,7 +111,7 @@ void TextBuffer::Cursor::moveRight(natptr count) {
 	}
 }
 
-void TextBuffer::Cursor::moveLeft(natptr count) {
+void TextBufferCursor::moveLeft(natptr count) {
 	for (; count; --count) {
 		if (this->holding()) {
 			if (!this->fall())
@@ -124,7 +124,23 @@ void TextBuffer::Cursor::moveLeft(natptr count) {
 	}
 }
 
-natptr TextBuffer::Cursor::getColumn() {
+void TextBufferCursor::moveUp(natptr) {
+	for (; count; --count) {
+		State state = this->locateForwards('\n');
+		// set our state to the found state.
+		continue;
+	}
+}
+
+void TextBufferCursor::moveDown(natptr count) {
+	for (; count; --count) {
+		State state = this->locateForwards('\n');
+		// set our state to the found state.
+		continue;
+	}
+}
+
+natptr TextBufferCursor::getColumn() {
 	natptr i = 0;
 	for (Segment* segment = this->_segment; segment;
 	     segment = segment->prior()) {
@@ -137,18 +153,18 @@ natptr TextBuffer::Cursor::getColumn() {
 	return i + 1;
 }
 
-void TextBuffer::Cursor::climb(Segment& segment) noexcept {
+void TextBufferCursor::climb(Segment& segment) noexcept {
 	this->_segment = &segment;
 	this->_pointer = this->segment()->begin();
 	this->_pointer -= segment.empty();
 }
 
-void TextBuffer::Cursor::drop(Segment& segment) noexcept {
+void TextBufferCursor::drop(Segment& segment) noexcept {
 	this->_segment = &segment;
 	this->_pointer = (BitType*)this->_segment->end() - 1;
 }
 
-bool TextBuffer::Cursor::jump() noexcept {
+bool TextBufferCursor::jump() noexcept {
 	Segment* orig = this->_segment;
 	Segment* curr = this->_segment->next();
 	for (; curr; curr = curr->next()) {
@@ -160,7 +176,7 @@ bool TextBuffer::Cursor::jump() noexcept {
 	return orig != this->_segment;
 }
 
-bool TextBuffer::Cursor::fall() noexcept {
+bool TextBufferCursor::fall() noexcept {
 	Segment* orig = this->_segment;
 	Segment* curr = this->_segment->prior();
 	for (; curr; curr = curr->prior()) {
@@ -172,14 +188,14 @@ bool TextBuffer::Cursor::fall() noexcept {
 	return orig != this->_segment;
 }
 
-TextBuffer::Segment::Segment(Segment& prior, bool edited) noexcept
+TextBufferSegment::Segment(Segment& prior, bool edited) noexcept
 	: _prior(&prior), _edited(edited), _next(prior._next) {
 	if (prior._next)
 		prior._next->_prior = this;
 	prior._next = this;
 }
 
-void TextBuffer::Segment::prepend(Segment& prior) {
+void TextBufferSegment::prepend(Segment& prior) {
 	prior._next = this;
 	if (this->_prior)
 		this->_prior->_next = &prior;
@@ -187,25 +203,25 @@ void TextBuffer::Segment::prepend(Segment& prior) {
 	this->_prior = &prior;
 }
 
-TextBuffer::Segment::~Segment() noexcept {
+TextBufferSegment::~Segment() noexcept {
 	if (this->_prior)
 		this->_prior->_next = this->_next;
 	if (this->_next)
 		this->_next->_prior = this->_prior;
 }
 
-void TextBuffer::Segment::split(WeightType at) noexcept {
+void TextBufferSegment::split(WeightType at) noexcept {
 	new Segment(*this, true);
 	this->_next->fill(*this, &this->_data[at]);
 }
 
-void TextBuffer::Segment::fill(Segment& from, const BitType* iter) noexcept {
+void TextBufferSegment::fill(Segment& from, const BitType* iter) noexcept {
 	// TODO: We fill the segment; then, when done filling, update from.mass with -= n.
 	for (const BitType* end = from.end(); iter != end; ++iter, from.erase())
 		this->write(*iter);
 }
 
-void TextBuffer::Segment::print() const noexcept {
+void TextBufferSegment::print() const noexcept {
 	for (auto bit : *this)
 		std::cout << bit;
 }
