@@ -1,52 +1,55 @@
-Please do not look at the commit history. It's embarassing. :)
-
 # Kedit
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
 array, rope, piece table, or a gapped array, Kedit uses a (what I call)
-"gapped segmented doubly linked list" (I am still brainstorming names) for it's
-buffer. BTW, I thought of the buffer myself (I'm trying to flex). Please see
-the file `~/BIBLIOGRAPHY.md` for scholarly work that I have used for research.
+"gapped segmented circular doubly linked list" (I am still brainstorming names)
+for it's buffer. BTW, I thought of the buffer myself (I'm trying to flex).
+Please see the file `~/BIBLIOGRAPHY.md` for scholarly work that I have used for
+research.
 
-Also, I know I broke many modern C++ rules. I do not care. But here are
-some rules I broke:
+## The "gapped segmented circular doubly linked list"
 
-* Using C casts to omit the const type qualifier;
-* using the `new` keyword;
-* using 8-width tabs (tabs > spaces, fight me);
-* not making blank lines inside procedures to seperate code;
-* ~~using the `hpp` file extension rather than `h` in discordant to the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rl-file-suffix)~~;
-* not using inheritance ([I hate inheritance](#why-i-hate-inheritance));
-* using raw pointers; and
-* not using the C++ standard library (I use the C standard library, except
-  `iostream`).
-
-## What's with the buffer?
-
-**WARNING**: The my big O notation is not very good, nor my description of the
-variables.
-
-Since the time complexity of heap allocations are important, the time
-complexity of a heap allocation will be denoted with the constant $A$, and, for
-simplicity, previous heap allocations will not be considered.
-
-The process of inserting a string into a rope is too slow. First, you must
-locate the requested position in the rope within a $O(\log{n})$ time complexity,
-where $n$ is the length of the rope. Then, you must split the string, and
-allocate space for both halfs of the string in the heap. Soley due to
-allocating space on the heap per insertion is a no-go for me.
+Note that the "circular" part is still not implemented as well as a lot of the
+features.
 
 The data structure used for the buffer is a circular doubly linked list with
 each node having a preallocated space for data. The data structure is also
 accompanied by a cursor that is used for insertion, deletion, and traversing
 the buffer.
 
-### Time complexity
+When an insertion is made, several paths can happen based on the cursor's
+position.
 
-TODO: Account for gaps when inserting, deleting, and traversing when it comes.
+* If the cursor is within a segment's mass, the cursor will split the segment
+  from it's index onwards.
+* If the cursor is holding onto a segment's mass ($-1$th index of the
+  segment's mass), the cursor will drop to the prior segment if the prior
+  segment is empty; otherwise, the cursor will create a new prior segment, and
+  drop to the new prior segment.
+
+TODO: Other paths.
+
+For every path, the cursor simply appends the segment's mass after an other
+procedure.
+
+Delting also has several paths.
+
+TODO: Paths.
+   
+TODO: THIS ENTIRE SECTION
+
+**WARNING**: My big O notation is not very good, nor me explaining things.
+
+Since the time complexity of heap allocations are important, the time
+complexity of a heap allocation will be denoted with the constant $A$, and, for
+simplicity, previous heap allocations will not be considered.
+
+### Time complexity
 
 TODO: Base the time complexities off of movement. F.e. include the time it
 takes to drop down to a segment after prepending a segment.
+
+TODO: Account for gaps when inserting, deleting, and traversing.
 
 #### Time time complexity of traversing.
 
