@@ -72,12 +72,7 @@ TODO: Account for gaps when inserting, deleting, and traversing.
 
 ### Space complexity
 
-## Tasks
-
-* [ ] Refactor to using C++20 standard features;
-* [x] implement writing and erasing operations;
-* [ ] implement movement operations; and
-* [ ] come up with an input system.
+TDOJF:LKSJD;fk
 
 ## Data structures and algorithms
 

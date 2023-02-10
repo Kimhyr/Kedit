@@ -19,6 +19,12 @@ Finseth, Craig A.
 ???
 https://www.finseth.com/craft/
 
-I'm not allowed to cite Wikipedia. I would if it was acceptable
-(https://en.wikipedia.org/wiki/Text_editor).
+I'm not allowed to cite Wikipedia. I would if it was acceptable.
+https://en.wikipedia.org/wiki/Text_editor.
+https://en.wikipedia.org/wiki/Piece_table
+https://en.wikipedia.org/wiki/Gap_buffer
+https://en.wikipedia.org/wiki/Rope_(data_structure)
 
+https://iq.opengenus.org/data-structures-used-in-text-editor/
+https://news.ycombinator.com/item?id=11244103
+https://ecc-comp.blogspot.com/2015/05/a-brief-glance-at-how-5-text-editors.html
