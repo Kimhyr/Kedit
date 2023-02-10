@@ -45,6 +45,9 @@ the buffer.
 
 TODO: Account for gaps when inserting, deleting, and traversing when it comes.
 
+TODO: Base the time complexities off of movement. F.e. include the time it
+takes to drop down to a segment after prepending a segment.
+
 #### Time time complexity of traversing.
 
 * Traversing the buffer has the time complexity of $O(\log{-i + n + 1})$ moving
@@ -53,10 +56,12 @@ TODO: Account for gaps when inserting, deleting, and traversing when it comes.
 
 #### The time complexity of inserting.
 
-* inserting a string when the cursor is hanging in it's segment is
-  $O(A\lceil\frac{n-m+o}{m}\rceil+n)$; and
-* inserting a string in the middle of the cursor's segment's mass has the time
-  complexity of $O(A\lceil\frac{n-m+o}{m}\rceil+o-i-1+n)$.
+* inserting a string when the cursor is hanging in it's is
+  $O(A\lceil\frac{n-m+o}{m}\rceil+n)$;
+* inserting a string within the mass of the cursor's segment is
+  $O(A\lceil\frac{n-m+o}{m}\rceil+o-i-1+n)$; and
+* inserting a string when the cursor is holding onto it's segment is
+  $O(A\lceil\frac{n-m+o}{m}\rceil+A+n)$;
 
 #### The time complexity of deleting.
 
