@@ -53,9 +53,9 @@ TODO: Account for gaps when inserting, deleting, and traversing.
 
 #### Time time complexity of traversing.
 
-* Traversing the buffer has the time complexity of $O(\log{-i + n + 1})$ moving
+* Traversing the buffer has the time complexity of $O(\log{-i+n+1})$ moving
   forwards, and
-* $O(\log{i + 1})$ moving backwards.
+* $O(\log{i+1})$ moving backwards.
 
 #### The time complexity of inserting.
 
@@ -72,7 +72,7 @@ TODO: Account for gaps when inserting, deleting, and traversing.
 
 ### Space complexity
 
-$O(n \mod{m} + n)$, where $m$ is the capacity of a segment.
+$O(n\mod{m}+n)$, where $m$ is the capacity of a segment.
 
 TDOJF:LKSJD;fk
 
