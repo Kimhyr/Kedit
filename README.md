@@ -72,9 +72,9 @@ TODO: Account for gaps when inserting, deleting, and traversing.
 
 ### Space complexity
 
-TDOJF:LKSJD;fk
+$O(n \mod m + n)$, where $m$ is the capacity of a segment.
 
-## Data structures and algorithms
+TDOJF:LKSJD;fk
 
 TODO: This section.
 
