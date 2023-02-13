@@ -73,7 +73,7 @@ TODO: Account for gaps when inserting, deleting, and traversing.
 ### Space complexity
 
 ```math
-\text{Let }n=\text{The size of the input string}. $
+\text{Let }n=\text{The size of the input string}.\\
 
 m-n\mod{m}+n
 ```
