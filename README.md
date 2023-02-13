@@ -72,7 +72,7 @@ TODO: Account for gaps when inserting, deleting, and traversing.
 
 ### Space complexity
 
-$O(m-n\mod{m}+n)$, where $m$ is the capacity of a segment.
+$n>m\implies O(m-n\mod{m}+n)$, where $m$ is the capacity of a segment.
 
 TDOJF:LKSJD;fk
 
