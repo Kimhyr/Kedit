@@ -75,6 +75,8 @@ TODO: Account for gaps when inserting, deleting, and traversing.
 ```math
 \mbox{Let }n=\mbox{The size of the input string}.
 
+
+
 m-n\mod{m}+n
 ```
 
