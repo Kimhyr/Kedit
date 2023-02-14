@@ -23,7 +23,7 @@ $O(\log{n})$ concatenation, insertion, appendation, and deletion, but it also
 requires a heap allocation of a node containing the string everytime you want
 to write into the buffer, and you have to search for the requested location
 everytime you want to operate on the buffer. Solely because I'd have to
-allocate on the heap for every write operation, the rope triggered me.
+allocate in the heap for every write operation, the rope triggered me.
 
 The [gap buffer](https://en.wikipedia.org/wiki/Gap_buffer) is array-based,
 that's what triggered me.
