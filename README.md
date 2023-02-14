@@ -1,91 +1,53 @@
 # Kedit
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
-array, rope, piece table, or a gapped array, Kedit uses a (what I call)
-"gapped segmented circular doubly linked list" (I am still brainstorming names)
-for it's buffer. BTW, I thought of the buffer myself (I'm trying to flex).
-Please see the file `~/BIBLIOGRAPHY.md` for scholarly work that I have used for
-research.
+array, rope, piece table, or a gapped array, Kedit uses a gapped doubly
+circular linked list for it's buffer.
 
-## The "gapped segmented circular doubly linked list"
+## The buffer
 
-Note that the "circular" part is still not implemented as well as a lot of the
-features.
+The mathematical notation used in the following equations does not use Big $O$
+notation. Instead, they use an adapted form of Big $O$ notation to be more
+explicit because Big $O$ notation omits important factors, such as, in this
+case, an allocation on the heap.
 
-The data structure used for the buffer is a circular doubly linked list with
-each node having a preallocated space for data. The data structure is also
-accompanied by a cursor that is used for insertion, deletion, and traversing
-the buffer.
-
-When an insertion is made, several paths can happen based on the cursor's
-position.
-
-* If the cursor is within a segment's mass, the cursor will split the segment
-  from it's index onwards.
-* If the cursor is holding onto a segment's mass ($-1$th index of the
-  segment's mass), the cursor will drop to the prior segment if the prior
-  segment is empty; otherwise, the cursor will create a new prior segment, and
-  drop to the new prior segment.
-
-TODO: Other paths.
-
-For every path, the cursor simply appends the segment's mass after an other
-procedure.
-
-Delting also has several paths.
-
-TODO: Paths.
-   
-TODO: THIS ENTIRE SECTION
-
-**WARNING**: My big O notation is not very good, nor me explaining things.
-
-Since the time complexity of heap allocations are important, the time
-complexity of a heap allocation will be denoted with the constant $A$, and, for
-simplicity, previous heap allocations will not be considered.
+TODO: Explain the adapted form of Big $O$ notation better, or look for a better
+version of Big $O$ notation that satisfies my needs.
 
 ### Time complexity
 
-TODO: Base the time complexities off of movement. F.e. include the time it
-takes to drop down to a segment after prepending a segment.
+#### The time complexity of inserting a string:
 
-TODO: Account for gaps when inserting, deleting, and traversing.
+$$
+O\Bigg(\begin{cases}
+  i^+ = o, & \begin{cases}
+    n \leq m^-, & n \\
+    n > m^-, & \lceil\frac{n - m^-}{m}\rceil A(N) + n\\
+  \end{cases} \\
+  i^+ < o, & \begin{cases}
+    n \leq m^-, & A(N) + n \\
+    n > m^-, & \lceil\frac{n}{m}\rceil A(N) + n
+  \end{cases}
+\end{cases}\Bigg)
+$$
 
-#### Time time complexity of traversing.
+#### The time complexity of searching for a string:
 
-* Traversing the buffer has the time complexity of $O(\log{-i+n+1})$ moving
-  forwards, and
-* $O(\log{i+1})$ moving backwards.
+$$
+O\Big(\frac{nm + 2n}{2m}\Big)
+$$
 
-#### The time complexity of inserting.
+#### The time for the cursor to jump to a location:
 
-* inserting a string when the cursor is hanging in it's is
-  $O(A\lceil\frac{n-m+o}{m}\rceil+n)$;
-* inserting a string within the mass of the cursor's segment is
-  $O(A\lceil\frac{n-m+o}{m}\rceil+o-i-1+n)$; and
-* inserting a string when the cursor is holding onto it's segment is
-  $O(A\lceil\frac{n-m+o}{m}\rceil+A+n)$;
-
-#### The time complexity of deleting.
-
-* Deleting a string has the time complexity of $O(n)$. 
+$$
+O(1)
+$$
 
 ### Space complexity
 
-```math
-\text{Let }n=\text{The size of the input string}.\newline
-
-m-n\mod{m}+n
-```
-
-$n>m\implies O(m-n\mod{m}+n)$, where $m$ is the capacity of a segment.
-
-TDOJF:LKSJD;fk
-
-TODO: This section.
-
-As said in the introduction of this repository, the data structure for the
-buffer is (what I call) 
+$$
+O(n + m - n \mod{m})
+$$
 
 ## Building
 

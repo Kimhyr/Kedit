@@ -2,6 +2,7 @@
 
 #include <string_view>
 #include <stdexcept>
+#include <algorithm>
 
 #include "Types.h"
 
@@ -10,10 +11,10 @@ namespace Kedit {
 template<typename Water_T, natptr CAPACITY_T>
 class Bucket {
 public:
-	typedef std::basic_string_view<Water_T> ViewType;
+	using View = std::basic_string_view<Water_T>;
 
 public:
-	Bucket() noexcept
+	constexpr Bucket() noexcept
 		: _end(this->_water) {}
 	Bucket(Bucket&&) = delete;
 	Bucket(const Bucket& other) noexcept
@@ -79,6 +80,12 @@ public:
 			--this->_end;
 			this->_end->~Water_T();
 		} while (--count && !this->empty());
+	}
+
+	void shift(natptr count = 1) {
+		// TODO: Make this more efficient.
+		std::shift_left(this->begin(), this->end(), count);
+		this->pop(count);
 	}
 
 private:
