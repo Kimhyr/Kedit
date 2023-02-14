@@ -1,3 +1,8 @@
+TODO: Explain the adapted form of Big $O$ notation better, or look for a better
+version of Big $O$ notation that satisfies my needs.
+
+TODO: Define the variables for each expression.
+
 # Kedit
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
@@ -11,12 +16,10 @@ notation. Instead, they use an adapted form of Big $O$ notation to be more
 explicit because Big $O$ notation omits important factors, such as, in this
 case, an allocation on the heap.
 
-TODO: Explain the adapted form of Big $O$ notation better, or look for a better
-version of Big $O$ notation that satisfies my needs.
-
 ### Time complexity
 
 #### The time complexity of inserting a string:
+
 
 $$
 O\Bigg(\begin{cases}
@@ -34,10 +37,14 @@ $$
 #### The time complexity of searching for a string:
 
 $$
-O\Big(\frac{nm + 2n}{2m}\Big)
+O\Bigg(\begin{cases}
+  \overrightarrow{S}, & n - i^+ \\
+  \overleftarrow{S}, & i^+ \\
+  \overleftrightarrow{S}, & \frac{n}{2} \\
+\end{cases}\Bigg) \\
 $$
 
-#### The time for the cursor to jump to a location:
+#### The time complexity for the cursor to jump to a found location:
 
 $$
 O(1)
