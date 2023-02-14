@@ -7,9 +7,33 @@ TODO: Define the variables for each expression.
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
 array, rope, piece table, or a gapped array, Kedit uses a gapped doubly
-circular linked list for it's buffer.
+circular linked list for it's buffer (I'm still working on the name of the
+buffer).
 
 ## The buffer
+
+The reason why I didn't use other data structures used for text buffers is
+because they simply didn't satisfy me.
+
+### Problems with other data structures:
+
+The [rope data structure](https://en.wikipedia.org/wiki/Rope_(data_structure)
+), which I assume is the most used, is too slow for me. Yes, it has
+$O(\log{n})$ concatenation, insertion, appendation, and deletion, but it also
+requires a heap allocation of a node containing the string everytime you want
+to write into the buffer, and you have to search for the requested location
+everytime you want to operate on the buffer. Solely because I'd have to
+allocate on the heap for every write operation, the rope triggered me.
+
+The [gap buffer](https://en.wikipedia.org/wiki/Gap_buffer) is array-based,
+that's what triggered me.
+
+I actually thought of a similar data structure to the [piece
+table](https://en.wikipedia.org/wiki/Piece_table), but I had ideas to port this
+text editor to a [Vulkan](https://www.vulkan.org/)-based GUI, and I wanted
+a data structure that can performantly interop with a text renderer.
+
+### Disclaimer before THE MATH
 
 The mathematical notation used in the following equations does not use Big $O$
 notation. Instead, they use an adapted form of Big $O$ notation to be more
