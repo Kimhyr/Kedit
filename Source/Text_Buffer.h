@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../Bucket.h"
-
 namespace Kedit {
+
 
 class TextBuffer {
 	friend class Segment;
