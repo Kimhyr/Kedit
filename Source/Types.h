@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 namespace Kedit {
 
 using int8 = signed char;
@@ -32,10 +34,10 @@ using dword = unsigned int;
 using qword = unsigned int;
 
 template<typename Type_T>
-using ptr = Type_T*;
+using ptr = Type_T*; // Never-null pointer.
 
-template<class Type_T>
-using ref = Type_T&;
+template<typename Type_T>
+using refw = std::reference_wrapper<Type_T>;
 
 #if defined(__x86_64__)
 	using intptr = int64;
@@ -48,10 +50,14 @@ using ref = Type_T&;
 #endif
 
 struct Position {
+public:
 	natptr row;
 	natptr column;
 
-	explicit Position(natptr row, natptr column)
+public:
+	constexpr Position() noexcept
+		: row(0), column(0) {}
+	explicit Position(natptr row, natptr column) noexcept
 		: row(row), column(column) {}
 };
 
