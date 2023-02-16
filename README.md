@@ -6,16 +6,44 @@ TODO: Define the variables for each expression.
 # Kedit
 
 Kedit is an experimental text editor written from scratch. Instead of a dynamic
-array, rope, piece table, or a gapped array, Kedit uses a gapped doubly
-circular linked list for it's buffer (I'm still working on the name of the
-buffer).
+array, rope, piece table, or a gapped array, Kedit uses a (what I call) water
+wheel.
 
-## The buffer
+## The Water Wheel Buffer
+
+The Water Wheel Buffer is really a circular doubly linked list that is
+accompanied by a cursor, and each node/bucket has a fixed space to contain data.
+
+TODO: Maybe try NOT using "water wheel", "liquids", and "buckets" for
+analogies. It kinda gets too confusing.
+
+When you want to put multiple liquids (chars) into the water wheel and the
+cursor is at an awkward position, like in the middle of a bucket, the cursor
+fixes itself at a position to only do constant-time "appendations" with no need
+to split the bucket, or append or prepend a new bucket. The only time when this
+is not true is when the requested inputs are too much for the bucket, but this
+becomes unlikely because the bucket has a large fixed space for the inputs.
+Similarly, but more efficiently, erasing is just a one-time "move-out-of-an-
+awkward-position".
+
+Moving to the $n$th position of the water wheel, or to a certain offset from
+the cursor's current position is mostly just arithmetics.
+
+```klang
+object offset: Int = x;
+object current_bucket: Ptr<Bucket> = water_wheel.root;
+while ((offset -= bucket.weight) > 0)
+  current_bucket = current_bucket.next;
+cursor.buket = current_bucket;
+cursor.depth = current_bucket.weight + offset;
+\\ You can compute the column by using a dual-threaded alogirthm that I'm too
+\\ tired to explain or write right now.
+```
+
+### Problems with other data structures:
 
 The reason why I didn't use other data structures used for text buffers is
 because they simply didn't satisfy me.
-
-### Problems with other data structures:
 
 The [rope data structure](https://en.wikipedia.org/wiki/Rope_(data_structure)
 ), which I assume is the most used, is too slow for me. Yes, it has
