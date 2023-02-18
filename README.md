@@ -19,25 +19,23 @@ analogies. It kinda gets too confusing.
 
 When you want to put multiple liquids (chars) into the water wheel and the
 cursor is at an awkward position, like in the middle of a bucket, the cursor
-fixes itself at a position to only do constant-time "appendations" with no need
-to split the bucket, or append or prepend a new bucket. The only time when this
+fixes itself at a position to only do constant-time appendment with no need to
+split the bucket, or append or prepend a new bucket. The only time when this
 is not true is when the requested inputs are too much for the bucket, but this
 becomes unlikely because the bucket has a large fixed space for the inputs.
 Similarly, but more efficiently, erasing is just a one-time "move-out-of-an-
-awkward-position".
+awkward-position" before simple appendments.
 
 Moving to the $n$th position of the water wheel, or to a certain offset from
 the cursor's current position is mostly just arithmetics.
 
 ```klang
 object offset: Int = x;
-object current_bucket: Ptr<Bucket> = water_wheel.root;
+object current_bucket: @Bucket = water_wheel.root;
 while ((offset -= bucket.weight) > 0)
   current_bucket = current_bucket.next;
-cursor.buket = current_bucket;
+cursor.bucket = current_bucket;
 cursor.depth = current_bucket.weight + offset;
-\\ You can compute the column by using a dual-threaded alogirthm that I'm too
-\\ tired to explain or write right now.
 ```
 
 ### Problems with other data structures:
@@ -51,10 +49,9 @@ $O(\log{n})$ concatenation, insertion, appendation, and deletion, but it also
 requires a heap allocation of a node containing the string everytime you want
 to write into the buffer, and you have to search for the requested location
 everytime you want to operate on the buffer. Solely because I'd have to
-allocate in the heap for every write operation, the rope triggered me.
+allocate in the heap for every write operation, the rope was not it.
 
-The [gap buffer](https://en.wikipedia.org/wiki/Gap_buffer) is array-based,
-that's what triggered me.
+The [gap buffer](https://en.wikipedia.org/wiki/Gap_buffer) is array-based.
 
 I actually thought of a similar data structure to the [piece
 table](https://en.wikipedia.org/wiki/Piece_table), but I had ideas to port this
@@ -63,7 +60,7 @@ a data structure that can performantly interop with a text renderer.
 
 ### Disclaimer before THE MATH
 
-The mathematical notation used in the following equations does not use Big $O$
+The mathematical notation used in the following does not use Big $O$
 notation. Instead, they use an adapted form of Big $O$ notation to be more
 explicit because Big $O$ notation omits important factors, such as, in this
 case, an allocation on the heap.
@@ -71,7 +68,6 @@ case, an allocation on the heap.
 ### Time complexity
 
 #### The time complexity of inserting a string:
-
 
 $$
 O\Bigg(\begin{cases}
