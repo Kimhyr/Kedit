@@ -33,12 +33,6 @@ using word = unsigned short int;
 using dword = unsigned int;
 using qword = unsigned int;
 
-template<typename Type_T>
-using ptr = Type_T*; // Never-null pointer.
-
-template<typename Type_T>
-using refw = std::reference_wrapper<Type_T>;
-
 #if defined(__x86_64__)
 	using intptr = int64;
 	using natptr = nat64;
