@@ -4,54 +4,44 @@
 
 namespace Kedit {
 
-using int8 = signed char;
-using int16 = signed short int;
-using int32 = signed int;
-using int64 = signed long int;
+using I8 = signed char;
+using I16 = signed short int;
+using I32 = signed int;
+using I64 = signed long int;
 
-using nat = unsigned int;
-using nat8 = unsigned char;
-using nat16 = unsigned short int;
-using nat32 = unsigned int;
-using nat64 = unsigned long int;
+using N8 = unsigned char;
+using N16 = unsigned short int;
+using N32 = unsigned int;
+using N64 = unsigned long int;
 
-using real = double;
-using real32 = float;
-using real64 = double;
+using R32 = float;
+using R64 = double;
 
-using bool8 = nat8;
-using bool16 = nat16;
-using bool32 = nat32;
-using bool64 = nat64;
-
-using char8 = char;
-using char16 = char16_t;
-using char32 = char32_t;
-
-using byte = unsigned char;
-using word = unsigned short int;
-using dword = unsigned int;
-using qword = unsigned int;
+using B = bool;
+using B8 =  N8;
+using B16 = N16;
+using B32 = N32;
+using B64 = N64;
 
 #if defined(__x86_64__)
-	using intptr = int64;
-	using natptr = nat64;
-	using realptr = real64;
+	using I = I64;
+	using N = N64;
+	using R = R64;
 #else
-	using intptr = int32;
-	using natptr = nat32;
-	using realptr = real32;
+	using I = I32;
+	using N = N32;
+	using R = Rl32;
 #endif
 
 struct Position {
 public:
-	natptr row;
-	natptr column;
+	N row;
+	N column;
 
 public:
 	constexpr Position() noexcept
 		: row(0), column(0) {}
-	explicit Position(natptr row, natptr column) noexcept
+	explicit Position(N row, N column) noexcept
 		: row(row), column(column) {}
 };
 
