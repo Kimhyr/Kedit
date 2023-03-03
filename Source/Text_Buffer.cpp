@@ -17,7 +17,7 @@ void Text_Cursor::write(std::string_view const& input) noexcept {
 	} else if (this->is_climbing())
 		this->bucket_->split(this->depth());
 Write:
-	for (byte piece : input) {
+	for (Bit_Type piece : input) {
 		if (this->bucket().is_full()) {
 			new Text_Bucket(*this->bucket_, true);
 			if (this->is_at_head())
@@ -37,7 +37,7 @@ Write:
 	}
 }
 
-void Text_Cursor::erase(Difference_Type diff) {
+void Text_Cursor::erase(Weight_Type diff) {
 	if (this->is_holding())
 		// We are holdin 
 		throw std::out_of_range("Trying to erase an empty buffer.");
@@ -73,10 +73,10 @@ void Text_Cursor::jump_to(Bucket& bucket) noexcept {
 	this->pointer_ -= bucket.is_empty();
 }
 
-natptr Text_Cursor::compute_column() noexcept {
-	natptr res = 1;
+N Text_Cursor::compute_column() noexcept {
+	N res = 1;
 	Bucket const* bucket = &this->bucket();
-	for (byte const* iter = this->pointer(); *iter != '\n'; --iter, ++res) {
+	for (Bit_Type const* iter = this->pointer(); *iter != '\n'; --iter, ++res) {
 		if (iter == bucket->begin()) {
 			if (bucket == this->wheel().root_)
 				break;
@@ -87,7 +87,7 @@ natptr Text_Cursor::compute_column() noexcept {
 	return res;
 }
 
-void Text_Bucket::put(byte water) {
+void Text_Bucket::put(Bit_Type water) {
 	if (this->is_full())
 		throw std::overflow_error(__FUNCTION__);
 	*this->surface_ = water;
