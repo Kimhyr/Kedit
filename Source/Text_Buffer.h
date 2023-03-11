@@ -3,6 +3,7 @@
 #include <string_view>
 #include <stdexcept>
 #include <algorithm>
+#include <cmath>
 
 #include "Types.h"
 
@@ -24,10 +25,10 @@ public:
 		static constexpr const Weight_Type CAPACITY = 1024;
 	
 	public:
-		constexpr Bucket(bool filled) noexcept
-			: prior_(this), filled_(filled), next_(this) {} 
-		constexpr Bucket(This_Type& prior, bool filled)
-			: prior_(&prior), filled_(filled), next_(prior.next_) {
+		constexpr Bucket() noexcept
+			: prior_(this), next_(this) {} 
+		constexpr Bucket(This_Type& prior)
+			: prior_(&prior), next_(prior.next_) {
 			prior.next_->prior_ = this;
 			prior.next_ = this;
 		}
@@ -43,12 +44,10 @@ public:
 		constexpr This_Type const& prior() const noexcept { return *this->prior_; }
 		constexpr This_Type const& next() const noexcept { return *this->next_; }
 	
-		constexpr B filled() const noexcept { return this->filled_; }
-	
 		constexpr const Bit_Type* data() const noexcept { return this->data_; }
 	
 		constexpr const Bit_Type* begin() const noexcept { return this->data_; }
-		constexpr const Bit_Type* end() const noexcept { return this->surface_; }
+		constexpr const Bit_Type* end() const noexcept { return this->data_end_; }
 	
 		constexpr Weight_Type weight() const noexcept { return this->begin() - this->end(); }
 		constexpr bool is_full() const noexcept { return this->end() == this->begin() + CAPACITY; }
@@ -78,10 +77,9 @@ public:
 	
 	private:
 		This_Type* prior_;
-		B filled_;
-		Bit_Type data_[CAPACITY];
-		Bit_Type* surface_;
 		This_Type* next_;
+		Bit_Type data_[CAPACITY];
+		Bit_Type* data_end_;
 	};
 
 	class Cursor {
@@ -94,8 +92,7 @@ public:
 
 	public:
 		constexpr Cursor(Text_Buffer& wheel) noexcept
-			: wheel_(wheel), offset_(0), bucket_(wheel.root_), pointer_(wheel.root_->begin() - 1),
-			  column_(0) {}
+			: wheel_(wheel), bucket_(wheel.root_), pointer_(wheel.root_->begin() - 1) {}
 
 		~Cursor() = default;
 
@@ -105,10 +102,6 @@ public:
 		constexpr Bucket const& bucket() const noexcept { return *this->bucket_; }
 		constexpr Bit_Type const* pointer() const noexcept { return this->pointer_; }
 
-		constexpr Position const& position() const noexcept { return this->position_; }
-		constexpr Weight_Type column() const noexcept { return this->column_; }
-
-		constexpr Weight_Type offset() const noexcept { return this->offset_;}
 		constexpr Weight_Type depth() const noexcept { return this->pointer() - this->bucket().begin(); }
 
 		constexpr Bit_Type surface_data() const noexcept { return this->bucket().end()[-1]; }
@@ -122,25 +115,22 @@ public:
 		constexpr B is_at_head() const noexcept { return &this->bucket() == &this->wheel().root().prior(); }
 
 	public:
-		void write(std::string_view const& string) noexcept;
+		V write(std::string_view const& string) noexcept;
 
-		void erase(Weight_Type diff);
+		N erase(Weight_Type diff) noexcept;
 
-		void move_up(Weight_Type steps);
-		void move_down(Weight_Type steps);
-		void move_right(Weight_Type steps);
-		void move_left(Weight_Type steps);
+		V move_up(Weight_Type steps);
+		V move_down(Weight_Type steps);
+		V move_right(Weight_Type steps);
+		V move_left(Weight_Type steps);
  
 		Bucket* locate_backwards(Bit_Type delimiter);
 		Bucket* locate_forwards(Bit_Type delimeter);
 	
 	private:
 		Text_Buffer& wheel_;
-		Weight_Type offset_;
 		Bucket* bucket_;
 		Bit_Type const* pointer_; 
-		Position position_;
-		N column_;
 	
 	private:
 		void drop_to(Bucket& bucket) noexcept;
@@ -157,7 +147,6 @@ public:
 
 private:
 	Bucket* root_;
-	N height_;
 };
 
 using Text_Bucket = Text_Buffer::Bucket;

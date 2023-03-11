@@ -1,8 +1,6 @@
 #pragma once
 
-#include <functional>
-
-namespace Kedit {
+using V = void;
 
 using I8 = signed char;
 using I16 = signed short int;
@@ -32,17 +30,3 @@ using B64 = N64;
 	using N = N32;
 	using R = Rl32;
 #endif
-
-struct Position {
-public:
-	N row;
-	N column;
-
-public:
-	constexpr Position() noexcept
-		: row(0), column(0) {}
-	explicit Position(N row, N column) noexcept
-		: row(row), column(column) {}
-};
-
-}

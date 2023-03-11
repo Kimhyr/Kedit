@@ -1,10 +1,8 @@
 #include "Text_Buffer.h"
 
-#include <stdexcept>
-
 namespace Kedit {
 
-void Text_Cursor::write(std::string_view const& input) noexcept {
+V Text_Cursor::write(std::string_view const& input) noexcept {
 	if (this->is_holding()) {
 		if (this->bucket().is_empty())
 			goto Write;
@@ -37,19 +35,29 @@ Write:
 	}
 }
 
-void Text_Cursor::erase(Weight_Type diff) {
-	if (this->is_holding())
-		// We are holdin 
-		throw std::out_of_range("Trying to erase an empty buffer.");
-	else if (this->is_climbing())
+N Text_Cursor::erase(Weight_Type diff) noexcept {
+	if (this->is_holding()) {
+		if (this->is_at_root())
+			return diff;
+		this->drop_to(*this->bucket_->prior_);
+	} else if (this->is_climbing())
 		this->bucket_->split(this->depth());
+	for (; diff >= 80; diff -= 80) {
+		if (this->is_at_root()) {
+			if (this->is_resting())
+				break;
+			else return diff;
+		}
+		this->drop_to(*this->bucket_->prior_);
+		delete this->bucket_->next_;
+	}
 	for (; diff; --diff) {
 		if (this->bucket().is_empty()) {
 			if (this->is_at_root())
-				throw std::out_of_range("Trying to erase before the buffer.");
+				return diff;
 			this->drop_to(*this->bucket_->prior_);
 		}
-		bool is_nl = this->surface_data() == '\n';
+		B is_nl = this->surface_data() == '\n';
 		this->bucket_->take();
 		--this->pointer_;
 		if (is_nl) {
@@ -59,6 +67,7 @@ void Text_Cursor::erase(Weight_Type diff) {
 		} else --this->position_.column;
 		this->column_ = this->position_.column;
 	}
+	return diff;
 }
 
 void Text_Cursor::drop_to(Bucket& bucket) noexcept {
