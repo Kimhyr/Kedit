@@ -1,0 +1,3 @@
+C:/Users/King/Desktop/Kedit/Build/CMakeFiles/KEDIT.dir
+C:/Users/King/Desktop/Kedit/Build/CMakeFiles/edit_cache.dir
+C:/Users/King/Desktop/Kedit/Build/CMakeFiles/rebuild_cache.dir
