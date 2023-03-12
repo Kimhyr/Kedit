@@ -1,64 +1,14 @@
-# This Makefile was taken from
-# [https://gist.github.com/mauriciopoppe/de8908f67923091982c8c8136a063ea6].
 
-CC=clang++
+EXE=./Build/KEDIT.exe
 
-# Directories
-SRCDIR=./Source
-BLDDIR=./Build
+run:$(EXE)
+	$(EXE)
 
-# Extensions
-SRCEXT=cpp
-HDREXT=h
+clean:
+	$(shell powershell "Remove-Item .\Build -Recurse -Force")
 
-# Files
-BIN=kedit.exe
-SRCS=$(shell find $(SRCDIR) -name '*.$(SRCEXT)' | sort -k 1nr | cut -f2-)
-OBJS=$(SRCS:$(SRCDIR)/%.$(SRCEXT)=$(BLDDIR)/%.obj)
-DEPS=$(OBJS:.obj=.d)
+$(EXE):
+	cmake -G Ninja -B Build
+	cd Build && ninja
 
-# Flags
-FLGS=-O2 -std=c++20 -Wall -Wextra -g
-INCS=
-LIBS=
-
-.PHONY:default
-default:release
-
-.PHONY:release
-release:dirs
-	@$(MAKE) all
-
-.PHONY:dirs
-dirs:
-	@echo "Creating directories..."
-	@mkdir -p $(dir $(OBJS))
-	@mkdir -p $(BLDDIR)
-
-.PHONY:r
-r:default
-	./$(BIN)
-
-.PHONY:c
-c:
-	@echo "Deleting $(BIN) symlink..."
-	@$(RM) $(BINNAME)
-	@echo "Deleting directories..."
-	@$(RM) -r $(BLDDIR)
-
-.PHONY:all
-all:$(BLDDIR)/$(BIN)
-	@echo "Making symlink for $(BIN) -> $<..."
-	@$(RM) $(BIN)
-	@ln -s $(BLDDIR)/$(BIN) $(BIN)
-
-$(BLDDIR)/$(BIN):$(OBJS)
-	@echo "Linking $@..."
-	$(CC) $(OBJS) -o $@ ${LIBS}
-
--include $(DEPS)
-
-$(BLDDIR)/%.obj: $(SRCDIR)/%.$(SRCEXT)
-	@echo "Compiling $< -> $@..."
-	$(CC) $(FLGS) $(INCS) -MP -MMD -c $< -o $@
 
