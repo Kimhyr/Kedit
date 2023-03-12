@@ -6,13 +6,13 @@ set(KEDIT_LANGUAGE cpp)
 
 project(KEDIT)
 
-file(GLOB KEDIT_FILES "./Source/*.cpp")
-set(KEDIT_SOURCES ${KEDIT_FILES})
-add_executable(
-    KEDIT
-    ${KEDIT_SOURCES}
-)
+set(KEDIT_PATH ./Source)
+file(GLOB KEDIT_FILES ${KEDIT_PATH}/*.cpp)
+file(GLOB KEDIT_CORE_FILES ${KEDIT_PATH}/Core/*.cpp)
+file(GLOB KEDIT_UTILITY_FILES ${KEDIT_PATH}/Utility/*.cpp)
+set(KEDIT_SOURCES ${KEDIT_FILES} ${KEDIT_CORE_FILES} ${KEDIT_UTILITY_FILES})
 
-target_include_directories(
-    KEDIT PRIVATE ./Source
-)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Source)
+
+add_executable(KEDIT ${KEDIT_SOURCES})
+target_include_directories(KEDIT PRIVATE ${KEDIT_PATH})

@@ -101,8 +101,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-29p2h5"
-      binary: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-29p2h5"
+      source: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-dgjxr1"
+      binary: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-dgjxr1"
     cmakeVariables:
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd"
@@ -111,10 +111,10 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-29p2h5
+        Change Dir: C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-dgjxr1
         
-        Run Build Command(s):C:/PROGRA~1/ninja.exe -v cmTC_78aeb && [1/2] C:\\PROGRA~1\\LLVM\\bin\\clang.exe   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -MD -MT CMakeFiles/cmTC_78aeb.dir/CMakeCCompilerABI.c.obj -MF CMakeFiles\\cmTC_78aeb.dir\\CMakeCCompilerABI.c.obj.d -o CMakeFiles/cmTC_78aeb.dir/CMakeCCompilerABI.c.obj -c "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeCCompilerABI.c"
-        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\clang.exe -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_78aeb.dir/CMakeCCompilerABI.c.obj -o cmTC_78aeb.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_78aeb.lib -Xlinker /pdb:cmTC_78aeb.pdb -Xlinker /version:0.0     && cd ."
+        Run Build Command(s):C:/PROGRA~1/ninja.exe -v cmTC_aecf7 && [1/2] C:\\PROGRA~1\\LLVM\\bin\\clang.exe   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -MD -MT CMakeFiles/cmTC_aecf7.dir/CMakeCCompilerABI.c.obj -MF CMakeFiles\\cmTC_aecf7.dir\\CMakeCCompilerABI.c.obj.d -o CMakeFiles/cmTC_aecf7.dir/CMakeCCompilerABI.c.obj -c "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeCCompilerABI.c"
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\clang.exe -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_aecf7.dir/CMakeCCompilerABI.c.obj -o cmTC_aecf7.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_aecf7.lib -Xlinker /pdb:cmTC_aecf7.pdb -Xlinker /version:0.0     && cd ."
         
       exitCode: 0
   -
@@ -126,8 +126,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-kydf6b"
-      binary: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-kydf6b"
+      source: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-deqgrp"
+      binary: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-deqgrp"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd"
@@ -136,10 +136,10 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-kydf6b
+        Change Dir: C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-deqgrp
         
-        Run Build Command(s):C:/PROGRA~1/ninja.exe -v cmTC_33fb3 && [1/2] C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -MD -MT CMakeFiles/cmTC_33fb3.dir/CMakeCXXCompilerABI.cpp.obj -MF CMakeFiles\\cmTC_33fb3.dir\\CMakeCXXCompilerABI.cpp.obj.d -o CMakeFiles/cmTC_33fb3.dir/CMakeCXXCompilerABI.cpp.obj -c "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeCXXCompilerABI.cpp"
-        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_33fb3.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_33fb3.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_33fb3.lib -Xlinker /pdb:cmTC_33fb3.pdb -Xlinker /version:0.0     && cd ."
+        Run Build Command(s):C:/PROGRA~1/ninja.exe -v cmTC_4dcb5 && [1/2] C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -MD -MT CMakeFiles/cmTC_4dcb5.dir/CMakeCXXCompilerABI.cpp.obj -MF CMakeFiles\\cmTC_4dcb5.dir\\CMakeCXXCompilerABI.cpp.obj.d -o CMakeFiles/cmTC_4dcb5.dir/CMakeCXXCompilerABI.cpp.obj -c "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeCXXCompilerABI.cpp"
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_4dcb5.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_4dcb5.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_4dcb5.lib -Xlinker /pdb:cmTC_4dcb5.pdb -Xlinker /version:0.0     && cd ."
         
       exitCode: 0
   -
@@ -154,8 +154,8 @@ events:
     checks:
       - "Detecting CXX compile features"
     directories:
-      source: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-aqag1c"
-      binary: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-aqag1c"
+      source: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-lab9rd"
+      binary: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-lab9rd"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd"
@@ -164,10 +164,10 @@ events:
       variable: "CMAKE_CXX_FEATURE_TEST"
       cached: true
       stdout: |
-        Change Dir: C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-aqag1c
+        Change Dir: C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-lab9rd
         
-        Run Build Command(s):C:/PROGRA~1/ninja.exe -v cmTC_a8764 && [1/2] C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd   -std=c++14 -MD -MT CMakeFiles/cmTC_a8764.dir/feature_tests.cxx.obj -MF CMakeFiles\\cmTC_a8764.dir\\feature_tests.cxx.obj.d -o CMakeFiles/cmTC_a8764.dir/feature_tests.cxx.obj -c C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-aqag1c/feature_tests.cxx
-        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_a8764.dir/feature_tests.cxx.obj -o cmTC_a8764.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_a8764.lib -Xlinker /pdb:cmTC_a8764.pdb -Xlinker /version:0.0   -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames  && cd ."
+        Run Build Command(s):C:/PROGRA~1/ninja.exe -v cmTC_94de7 && [1/2] C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd   -std=c++14 -MD -MT CMakeFiles/cmTC_94de7.dir/feature_tests.cxx.obj -MF CMakeFiles\\cmTC_94de7.dir\\feature_tests.cxx.obj.d -o CMakeFiles/cmTC_94de7.dir/feature_tests.cxx.obj -c C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-lab9rd/feature_tests.cxx
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_94de7.dir/feature_tests.cxx.obj -o cmTC_94de7.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_94de7.lib -Xlinker /pdb:cmTC_94de7.pdb -Xlinker /version:0.0   -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames  && cd ."
         
       exitCode: 0
   -
@@ -182,8 +182,8 @@ events:
     checks:
       - "Detecting CXX compile features"
     directories:
-      source: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-u9aiii"
-      binary: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-u9aiii"
+      source: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-sye9rn"
+      binary: "C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-sye9rn"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd"
@@ -192,10 +192,10 @@ events:
       variable: "CMAKE_CXX_FEATURE_TEST"
       cached: true
       stdout: |
-        Change Dir: C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-u9aiii
+        Change Dir: C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-sye9rn
         
-        Run Build Command(s):C:/PROGRA~1/ninja.exe -v cmTC_91c8c && [1/2] C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd   -std=c++14 -MD -MT CMakeFiles/cmTC_91c8c.dir/feature_tests.cxx.obj -MF CMakeFiles\\cmTC_91c8c.dir\\feature_tests.cxx.obj.d -o CMakeFiles/cmTC_91c8c.dir/feature_tests.cxx.obj -c C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-u9aiii/feature_tests.cxx
-        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_91c8c.dir/feature_tests.cxx.obj -o cmTC_91c8c.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_91c8c.lib -Xlinker /pdb:cmTC_91c8c.pdb -Xlinker /version:0.0   -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames  && cd ."
+        Run Build Command(s):C:/PROGRA~1/ninja.exe -v cmTC_606b3 && [1/2] C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd   -std=c++14 -MD -MT CMakeFiles/cmTC_606b3.dir/feature_tests.cxx.obj -MF CMakeFiles\\cmTC_606b3.dir\\feature_tests.cxx.obj.d -o CMakeFiles/cmTC_606b3.dir/feature_tests.cxx.obj -c C:/Users/King/Desktop/Kedit/Build/CMakeFiles/CMakeScratch/TryCompile-sye9rn/feature_tests.cxx
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_606b3.dir/feature_tests.cxx.obj -o cmTC_606b3.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_606b3.lib -Xlinker /pdb:cmTC_606b3.pdb -Xlinker /version:0.0   -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames  && cd ."
         
       exitCode: 0
 ...

@@ -1,9 +1,6 @@
 #pragma once
-#ifndef CORE_H
-#define CORE_H
-
-#define ARCH_86_64 __x86_64__
-#define PROPERTY [[nodiscard]] constexpr
+#ifndef KEDIT_TYPES_HPP
+#define KEDIT_TYPES_HPP
 
 using Void = void;
 

@@ -20,11 +20,10 @@ CMAKE_ADDR2LINE:FILEPATH=CMAKE_ADDR2LINE-NOTFOUND
 //Path to a program.
 CMAKE_AR:FILEPATH=C:/Program Files/LLVM/bin/llvm-ar.exe
 
-//Choose the type of build, options are: None Debug Release RelWithDebInfo
-// MinSizeRel ...
+//No help, variable specified on the command line.
 CMAKE_BUILD_TYPE:STRING=Debug
 
-//CXX compiler
+//No help, variable specified on the command line.
 CMAKE_CXX_COMPILER:FILEPATH=C:/Program Files/LLVM/bin/clang++.exe
 
 //LLVM archiver
@@ -54,7 +53,7 @@ CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -DNDEBUG -g -Xclang -gcodeview -D_DLL 
 //Libraries linked by default with all C++ applications.
 CMAKE_CXX_STANDARD_LIBRARIES:STRING=-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames
 
-//C compiler
+//No help, variable specified on the command line.
 CMAKE_C_COMPILER:FILEPATH=C:/Program Files/LLVM/bin/clang.exe
 
 //LLVM archiver
@@ -102,8 +101,8 @@ CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=
 //Flags used by the linker during RELWITHDEBINFO builds.
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
-//Enable/Disable output of compile commands during generation.
-CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=
+//No help, variable specified on the command line.
+CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE
 
 //Value Computed by CMake.
 CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=C:/Users/King/Desktop/Kedit/Build/CMakeFiles/pkgRedirects

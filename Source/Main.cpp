@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Core.h"
+#include "Core/Core.hpp"
 
 Int32 main() {
 	std::cout << "Hello, World!";

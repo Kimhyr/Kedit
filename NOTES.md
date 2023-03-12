@@ -1,3 +1,6 @@
+String_Buffer
+
+
 ## Keybindings
 
 * Keybinds should be modal.
@@ -15,5 +18,5 @@
 	- `ByteMovement` (move per token/line):
 		* `CTRL + BitMovement`
 	- `SelectMovement` ():
-		* `SHIFT + [BitMovement|BlockMovement]` 
+		* `SHIFT + [BitMovement|BlockMovement]`
 
